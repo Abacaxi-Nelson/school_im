@@ -1,12 +1,14 @@
 //import 'package:auth_widget_builder/auth_widget_builder.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:starter_architecture_flutter_firebase/app/auth_widget.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/home_page.dart';
-import 'package:starter_architecture_flutter_firebase/app/top_level_providers.dart';
-import 'package:starter_architecture_flutter_firebase/app/sign_in/sign_in_page.dart';
-import 'package:starter_architecture_flutter_firebase/routing/app_router.dart';
+import 'package:school_im/app/auth_widget.dart';
+import 'package:school_im/app/home/home_page.dart';
+import 'package:school_im/app/top_level_providers.dart';
+import 'package:school_im/app/sign_in/sign_in_page.dart';
+import 'package:school_im/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:school_im/app/home/profile/init_profile.dart';
+import 'package:school_im/app/home/dashboard/dashboard_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,11 +27,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.indigo),
       debugShowCheckedModeBanner: false,
       home: AuthWidget(
+        profileBuilder: (_) => InitProfilePage(),
         nonSignedInBuilder: (_) => SignInPage(),
-        signedInBuilder: (_) => HomePage(),
+        signedInBuilder: (_) => DashboardPage(), //HomePage(),
       ),
-      onGenerateRoute: (settings) =>
-          AppRouter.onGenerateRoute(settings, firebaseAuth),
+      onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings, firebaseAuth),
     );
   }
 }

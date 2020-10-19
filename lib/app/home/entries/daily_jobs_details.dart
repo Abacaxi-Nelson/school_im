@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/entries/entry_job.dart';
+import 'package:school_im/app/home/entries/entry_job.dart';
 
 /// Temporary model class to store the time tracked and pay for a job
 class JobDetails {
@@ -19,20 +19,16 @@ class DailyJobsDetails {
   final DateTime date;
   final List<JobDetails> jobsDetails;
 
-  double get pay => jobsDetails
-      .map((jobDuration) => jobDuration.pay)
-      .reduce((value, element) => value + element);
+  double get pay => jobsDetails.map((jobDuration) => jobDuration.pay).reduce((value, element) => value + element);
 
-  double get duration => jobsDetails
-      .map((jobDuration) => jobDuration.durationInHours)
-      .reduce((value, element) => value + element);
+  double get duration =>
+      jobsDetails.map((jobDuration) => jobDuration.durationInHours).reduce((value, element) => value + element);
 
   /// splits all entries into separate groups by date
   static Map<DateTime, List<EntryJob>> _entriesByDate(List<EntryJob> entries) {
     final Map<DateTime, List<EntryJob>> map = {};
     for (final entryJob in entries) {
-      final entryDayStart = DateTime(entryJob.entry.start.year,
-          entryJob.entry.start.month, entryJob.entry.start.day);
+      final entryDayStart = DateTime(entryJob.entry.start.year, entryJob.entry.start.month, entryJob.entry.start.day);
       if (map[entryDayStart] == null) {
         map[entryDayStart] = [entryJob];
       } else {

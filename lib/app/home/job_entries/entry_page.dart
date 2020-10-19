@@ -2,14 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:starter_architecture_flutter_firebase/app/top_level_providers.dart';
-import 'package:starter_architecture_flutter_firebase/common_widgets/date_time_picker.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/job_entries/format.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/models/entry.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/models/job.dart';
+import 'package:school_im/app/top_level_providers.dart';
+import 'package:school_im/common_widgets/date_time_picker.dart';
+import 'package:school_im/app/home/job_entries/format.dart';
+import 'package:school_im/app/home/models/entry.dart';
+import 'package:school_im/app/home/models/job.dart';
 import 'package:alert_dialogs/alert_dialogs.dart';
-import 'package:starter_architecture_flutter_firebase/routing/app_router.dart';
-import 'package:starter_architecture_flutter_firebase/services/firestore_database.dart';
+import 'package:school_im/routing/app_router.dart';
+import 'package:school_im/services/firestore_database.dart';
 import 'package:pedantic/pedantic.dart';
 
 class EntryPage extends StatefulWidget {
@@ -53,10 +53,8 @@ class _EntryPageState extends State<EntryPage> {
   }
 
   Entry _entryFromState() {
-    final start = DateTime(_startDate.year, _startDate.month, _startDate.day,
-        _startTime.hour, _startTime.minute);
-    final end = DateTime(_endDate.year, _endDate.month, _endDate.day,
-        _endTime.hour, _endTime.minute);
+    final start = DateTime(_startDate.year, _startDate.month, _startDate.day, _startTime.hour, _startTime.minute);
+    final end = DateTime(_endDate.year, _endDate.month, _endDate.day, _endTime.hour, _endTime.minute);
     final id = widget.entry?.id ?? documentIdFromCurrentDate();
     return Entry(
       id: id,

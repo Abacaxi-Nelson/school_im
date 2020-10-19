@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:starter_architecture_flutter_firebase/constants/keys.dart';
-import 'package:starter_architecture_flutter_firebase/constants/strings.dart';
+import 'package:school_im/constants/keys.dart';
+import 'package:school_im/constants/strings.dart';
 
 enum TabItem { jobs, entries, account }
 
 class TabItemData {
-  const TabItemData(
-      {@required this.key, @required this.title, @required this.icon});
+  const TabItemData({@required this.key, @required this.title, @required this.icon});
 
   final String key;
   final String title;

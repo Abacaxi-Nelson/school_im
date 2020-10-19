@@ -2,14 +2,17 @@ import 'dart:math';
 
 import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:starter_architecture_flutter_firebase/app/top_level_providers.dart';
-import 'package:starter_architecture_flutter_firebase/app/sign_in/sign_in_view_model.dart';
-import 'package:starter_architecture_flutter_firebase/app/sign_in/sign_in_button.dart';
-import 'package:starter_architecture_flutter_firebase/constants/keys.dart';
-import 'package:starter_architecture_flutter_firebase/constants/strings.dart';
+import 'package:school_im/app/top_level_providers.dart';
+import 'package:school_im/app/sign_in/sign_in_view_model.dart';
+import 'package:school_im/app/sign_in/sign_in_button.dart';
+import 'package:school_im/constants/keys.dart';
+import 'package:school_im/constants/strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:starter_architecture_flutter_firebase/routing/app_router.dart';
+import 'package:school_im/routing/app_router.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:apple_sign_in/apple_sign_in.dart' as ios;
+import 'package:apple_sign_in/apple_sign_in.dart';
 
 final signInModelProvider = ChangeNotifierProvider<SignInViewModel>(
   (ref) => SignInViewModel(auth: ref.watch(firebaseAuthProvider)),
@@ -39,9 +42,7 @@ class SignInPage extends ConsumerWidget {
 }
 
 class SignInPageContents extends StatelessWidget {
-  const SignInPageContents(
-      {Key key, this.viewModel, this.title = 'Architecture Demo'})
-      : super(key: key);
+  const SignInPageContents({Key key, this.viewModel, this.title = 'Architecture Demo'}) : super(key: key);
   final SignInViewModel viewModel;
   final String title;
 
@@ -59,12 +60,7 @@ class SignInPageContents extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        title: Text(title),
-      ),
-      backgroundColor: Colors.grey[200],
-      body: _buildSignIn(context),
+      body: _getBody(context),
     );
   }
 
@@ -78,6 +74,84 @@ class SignInPageContents extends StatelessWidget {
       Strings.signIn,
       textAlign: TextAlign.center,
       style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.w600),
+    );
+  }
+
+  Widget iosWidget() {
+    print("iosWidget");
+    return FutureBuilder(
+      builder: (context, projectSnap) {
+        if (projectSnap.connectionState == ConnectionState.none && projectSnap.hasData == null) {
+          return const SizedBox(height: 0.0);
+        }
+        return Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ios.AppleSignInButton(
+            style: ios.ButtonStyle.white,
+            type: ios.ButtonType.signIn,
+            onPressed: viewModel.isLoading ? null : viewModel.signInIos,
+          ),
+        );
+      },
+      future: AppleSignIn.isAvailable(),
+    );
+  }
+
+  Widget _getBody(BuildContext context) {
+    List<Widget> pages = [
+      Container(
+        color: Color(0xff9188E5),
+      ),
+      Container(
+        color: Colors.red,
+      ),
+      Container(
+        color: Color(0xff9188E5),
+      ),
+    ];
+    final controller = PageController(
+      initialPage: 1,
+    );
+
+    return Stack(
+      children: <Widget>[
+        PageView(
+          children: pages,
+          controller: controller,
+          scrollDirection: Axis.horizontal,
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            //height: 150.0,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Text(""),
+                ),
+                SmoothPageIndicator(
+                    controller: controller, // PageController
+                    count: pages.length,
+                    effect: SlideEffect(
+                        spacing: 8.0,
+                        radius: 4.0,
+                        dotWidth: 10.0,
+                        dotHeight: 10.0,
+                        paintStyle: PaintingStyle.stroke,
+                        strokeWidth: 1.5,
+                        dotColor: Color(0xffC1BCF2),
+                        activeDotColor: Colors.white), // your preferred effect
+                    onDotClicked: (index) {}),
+                SizedBox(height: 20.0),
+                iosWidget(),
+                SizedBox(height: 40.0),
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 
@@ -100,9 +174,7 @@ class SignInPageContents extends StatelessWidget {
               SignInButton(
                 key: emailPasswordButtonKey,
                 text: Strings.signInWithEmailPassword,
-                onPressed: viewModel.isLoading
-                    ? null
-                    : () => _showEmailPasswordSignInPage(context),
+                onPressed: viewModel.isLoading ? null : () => _showEmailPasswordSignInPage(context),
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
               ),
@@ -118,8 +190,7 @@ class SignInPageContents extends StatelessWidget {
                 text: Strings.goAnonymous,
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
-                onPressed:
-                    viewModel.isLoading ? null : viewModel.signInAnonymously,
+                onPressed: viewModel.isLoading ? null : viewModel.signInAnonymously,
               ),
             ],
           ),

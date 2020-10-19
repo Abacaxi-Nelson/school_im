@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/models/job.dart';
+import 'package:school_im/app/home/models/job.dart';
 import 'package:alert_dialogs/alert_dialogs.dart';
-import 'package:starter_architecture_flutter_firebase/app/top_level_providers.dart';
-import 'package:starter_architecture_flutter_firebase/routing/app_router.dart';
-import 'package:starter_architecture_flutter_firebase/services/firestore_database.dart';
+import 'package:school_im/app/top_level_providers.dart';
+import 'package:school_im/routing/app_router.dart';
+import 'package:school_im/services/firestore_database.dart';
 import 'package:pedantic/pedantic.dart';
 
 class EditJobPage extends StatefulWidget {
@@ -52,8 +52,7 @@ class _EditJobPageState extends State<EditJobPage> {
       try {
         final database = context.read(databaseProvider);
         final jobs = await database.jobsStream().first;
-        final allLowerCaseNames =
-            jobs.map((job) => job.name.toLowerCase()).toList();
+        final allLowerCaseNames = jobs.map((job) => job.name.toLowerCase()).toList();
         if (widget.job != null) {
           allLowerCaseNames.remove(widget.job.name.toLowerCase());
         }

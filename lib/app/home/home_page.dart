@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/account/account_page.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/cupertino_home_scaffold.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/entries/entries_page.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/jobs/jobs_page.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/tab_item.dart';
+import 'package:school_im/app/home/account/account_page.dart';
+import 'package:school_im/app/home/cupertino_home_scaffold.dart';
+import 'package:school_im/app/home/entries/entries_page.dart';
+import 'package:school_im/app/home/jobs/jobs_page.dart';
+import 'package:school_im/app/home/tab_item.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -39,8 +39,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async =>
-          !await navigatorKeys[_currentTab].currentState.maybePop(),
+      onWillPop: () async => !await navigatorKeys[_currentTab].currentState.maybePop(),
       child: CupertinoHomeScaffold(
         currentTab: _currentTab,
         onSelectTab: _select,

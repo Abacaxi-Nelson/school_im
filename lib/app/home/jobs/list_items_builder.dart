@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/jobs/empty_content.dart';
+import 'package:school_im/app/home/jobs/empty_content.dart';
 
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
@@ -16,8 +16,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return data.when(
-      data: (items) =>
-          items.isNotEmpty ? _buildList(items) : const EmptyContent(),
+      data: (items) => items.isNotEmpty ? _buildList(items) : const EmptyContent(),
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (_, __) => const EmptyContent(
         title: 'Something went wrong',

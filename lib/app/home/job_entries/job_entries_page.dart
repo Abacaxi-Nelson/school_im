@@ -4,15 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/job_entries/entry_list_item.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/job_entries/entry_page.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/jobs/edit_job_page.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/jobs/list_items_builder.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/models/entry.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/models/job.dart';
+import 'package:school_im/app/home/job_entries/entry_list_item.dart';
+import 'package:school_im/app/home/job_entries/entry_page.dart';
+import 'package:school_im/app/home/jobs/edit_job_page.dart';
+import 'package:school_im/app/home/jobs/list_items_builder.dart';
+import 'package:school_im/app/home/models/entry.dart';
+import 'package:school_im/app/home/models/job.dart';
 import 'package:alert_dialogs/alert_dialogs.dart';
-import 'package:starter_architecture_flutter_firebase/app/top_level_providers.dart';
-import 'package:starter_architecture_flutter_firebase/routing/cupertino_tab_view_router.dart';
+import 'package:school_im/app/top_level_providers.dart';
+import 'package:school_im/routing/cupertino_tab_view_router.dart';
 import 'package:pedantic/pedantic.dart';
 
 class JobEntriesPage extends StatelessWidget {
@@ -55,12 +55,9 @@ class JobEntriesPage extends StatelessWidget {
   }
 }
 
-final jobStreamProvider =
-    StreamProvider.autoDispose.family<Job, String>((ref, jobId) {
+final jobStreamProvider = StreamProvider.autoDispose.family<Job, String>((ref, jobId) {
   final database = ref.watch(databaseProvider);
-  return database != null && jobId != null
-      ? database.jobStream(jobId: jobId)
-      : const Stream.empty();
+  return database != null && jobId != null ? database.jobStream(jobId: jobId) : const Stream.empty();
 });
 
 class JobEntriesAppBarTitle extends ConsumerWidget {
@@ -78,20 +75,16 @@ class JobEntriesAppBarTitle extends ConsumerWidget {
   }
 }
 
-final jobEntriesStreamProvider =
-    StreamProvider.autoDispose.family<List<Entry>, Job>((ref, job) {
+final jobEntriesStreamProvider = StreamProvider.autoDispose.family<List<Entry>, Job>((ref, job) {
   final database = ref.watch(databaseProvider);
-  return database != null && job != null
-      ? database.entriesStream(job: job)
-      : const Stream.empty();
+  return database != null && job != null ? database.entriesStream(job: job) : const Stream.empty();
 });
 
 class JobEntriesContents extends ConsumerWidget {
   final Job job;
   const JobEntriesContents({@required this.job});
 
-  Future<void> _deleteEntry(
-      BuildContext context, ScopedReader watch, Entry entry) async {
+  Future<void> _deleteEntry(BuildContext context, ScopedReader watch, Entry entry) async {
     try {
       final database = watch(databaseProvider);
       await database.deleteEntry(entry);

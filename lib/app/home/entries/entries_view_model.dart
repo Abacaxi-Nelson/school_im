@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/entries/daily_jobs_details.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/entries/entries_list_tile.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/entries/entry_job.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/job_entries/format.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/models/entry.dart';
-import 'package:starter_architecture_flutter_firebase/app/home/models/job.dart';
-import 'package:starter_architecture_flutter_firebase/services/firestore_database.dart';
+import 'package:school_im/app/home/entries/daily_jobs_details.dart';
+import 'package:school_im/app/home/entries/entries_list_tile.dart';
+import 'package:school_im/app/home/entries/entry_job.dart';
+import 'package:school_im/app/home/job_entries/format.dart';
+import 'package:school_im/app/home/models/entry.dart';
+import 'package:school_im/app/home/models/job.dart';
+import 'package:school_im/services/firestore_database.dart';
 
 class EntriesViewModel {
   EntriesViewModel({@required this.database});
@@ -19,8 +19,7 @@ class EntriesViewModel {
         _entriesJobsCombiner,
       );
 
-  static List<EntryJob> _entriesJobsCombiner(
-      List<Entry> entries, List<Job> jobs) {
+  static List<EntryJob> _entriesJobsCombiner(List<Entry> entries, List<Job> jobs) {
     return entries.map((entry) {
       final job = jobs.firstWhere((job) => job.id == entry.jobId);
       return EntryJob(entry, job);
@@ -28,8 +27,7 @@ class EntriesViewModel {
   }
 
   /// Output stream
-  Stream<List<EntriesListTileModel>> get entriesTileModelStream =>
-      _allEntriesStream.map(_createModels);
+  Stream<List<EntriesListTileModel>> get entriesTileModelStream => _allEntriesStream.map(_createModels);
 
   static List<EntriesListTileModel> _createModels(List<EntryJob> allEntries) {
     if (allEntries.isEmpty) {
@@ -43,9 +41,8 @@ class EntriesViewModel {
         .reduce((value, element) => value + element);
 
     // total pay across all jobs
-    final totalPay = allDailyJobsDetails
-        .map((dateJobsDuration) => dateJobsDuration.pay)
-        .reduce((value, element) => value + element);
+    final totalPay =
+        allDailyJobsDetails.map((dateJobsDuration) => dateJobsDuration.pay).reduce((value, element) => value + element);
 
     return <EntriesListTileModel>[
       EntriesListTileModel(
