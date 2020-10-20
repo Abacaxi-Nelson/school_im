@@ -34,13 +34,9 @@ class SignInViewModel with ChangeNotifier {
   Future<void> signInIos() async {
     isLoading = true;
     notifyListeners();
-    print("signInIos 1");
     // 1. perform the sign-in request
     const List<Scope> scopes = [Scope.email, Scope.fullName];
     final result = await AppleSignIn.performRequests([AppleIdRequest(requestedScopes: scopes)]);
-
-    print("signInIos 2");
-    print(result);
 
     // 2. check the result
     switch (result.status) {
@@ -51,9 +47,14 @@ class SignInViewModel with ChangeNotifier {
           idToken: String.fromCharCodes(appleIdCredential.identityToken),
           accessToken: String.fromCharCodes(appleIdCredential.authorizationCode),
         );
-        print("before auth.signInWithCredential(credential)");
+
+        if (scopes.contains(Scope.fullName)) {
+          print(appleIdCredential.email);
+          print(appleIdCredential.fullName.givenName);
+          print(appleIdCredential.fullName.familyName);
+        }
+
         await auth.signInWithCredential(credential);
-        print("after auth.signInWithCredential(credential)");
 
         // create profile
 

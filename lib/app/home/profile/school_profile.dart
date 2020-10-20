@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_im/common_widgets/custom_textfield.dart';
 import 'package:school_im/common_widgets/custom_button.dart';
 import 'package:school_im/app/home/profile/address_search.dart';
-import 'package:school_im/app/home/models/suggestion.dart';
+import 'package:school_im/app/home/models/school.dart';
 import 'package:school_im/app/home/models/profile.dart';
 import 'package:school_im/routing/app_router.dart';
 
@@ -17,7 +17,7 @@ class SchoolProfilePage extends StatefulWidget {
 class _SchoolProfilePageState extends State<SchoolProfilePage> {
   final myControllerEcole = TextEditingController();
   bool isEcoleOk = false;
-  Suggestion sug = null;
+  School school = null;
 
   @override
   void dispose() {
@@ -68,7 +68,7 @@ class _SchoolProfilePageState extends State<SchoolProfilePage> {
                         const SizedBox(height: 40.0),
                         CustomTextField(
                           onTap: () async {
-                            final Suggestion result = await showSearch(
+                            final School result = await showSearch(
                               context: context,
                               // we haven't created AddressSearch class
                               // this should be extending SearchDelegate
@@ -76,7 +76,7 @@ class _SchoolProfilePageState extends State<SchoolProfilePage> {
                             );
                             if (result != null) {
                               setState(() {
-                                sug = result;
+                                school = result;
                                 isEcoleOk = true;
                                 myControllerEcole.text = result.appellation_officielle;
                               });
@@ -104,11 +104,11 @@ class _SchoolProfilePageState extends State<SchoolProfilePage> {
                     onPressed: () async {
                       if (isEcoleOk) {
                         if (widget.profile.email != null) widget.profile.email = widget.profile.email;
-                        widget.profile.schoolId = sug.numero_uai;
+                        widget.profile.schoolId = school.numero_uai;
 
                         await Navigator.of(context, rootNavigator: true).pushNamed(
                           AppRoutes.parentProfilePage,
-                          arguments: {'profile': widget.profile, 'suggestion': sug},
+                          arguments: {'profile': widget.profile, 'school': school},
                         );
                       }
                     },

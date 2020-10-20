@@ -78,7 +78,6 @@ class SignInPageContents extends StatelessWidget {
   }
 
   Widget iosWidget() {
-    print("iosWidget");
     return FutureBuilder(
       builder: (context, projectSnap) {
         if (projectSnap.connectionState == ConnectionState.none && projectSnap.hasData == null) {

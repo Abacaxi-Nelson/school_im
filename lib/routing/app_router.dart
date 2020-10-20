@@ -6,7 +6,7 @@ import 'package:school_im/app/home/jobs/edit_job_page.dart';
 import 'package:school_im/app/home/models/entry.dart';
 import 'package:school_im/app/home/models/job.dart';
 import 'package:school_im/app/home/models/profile.dart';
-import 'package:school_im/app/home/models/suggestion.dart';
+import 'package:school_im/app/home/models/school.dart';
 import 'package:school_im/app/home/profile/school_profile.dart';
 import 'package:school_im/app/home/profile/school_parent.dart';
 import 'package:school_im/app/home/dashboard/dashboard_page.dart';
@@ -33,9 +33,9 @@ class AppRouter {
       case AppRoutes.parentProfilePage:
         final mapArgs = args as Map<String, dynamic>;
         final profile = mapArgs['profile'] as Profile;
-        final suggestion = mapArgs['suggestion'] as Suggestion;
+        final school = mapArgs['school'] as School;
         return MaterialPageRoute<dynamic>(
-          builder: (_) => ParentProfilePage(profile: profile, suggestion: suggestion),
+          builder: (_) => ParentProfilePage(profile: profile, school: school),
           settings: settings,
           fullscreenDialog: false,
         );

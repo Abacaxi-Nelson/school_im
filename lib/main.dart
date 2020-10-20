@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_im/app/home/profile/init_profile.dart';
 import 'package:school_im/app/home/dashboard/dashboard_page.dart';
+import 'package:school_im/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
     // MultiProvider for top-level services that don't depend on any runtime values (e.g. uid)
     final firebaseAuth = context.read(firebaseAuthProvider);
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.indigo),
+      theme: MyTheme.defaultTheme,
       debugShowCheckedModeBanner: false,
       home: AuthWidget(
         profileBuilder: (_) => InitProfilePage(),

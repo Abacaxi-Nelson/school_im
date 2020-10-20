@@ -49,9 +49,11 @@ class Profile extends Equatable {
         userIdParent: value['userIdParent'],
         schoolId: value['schoolId'],
         photoUrl: value['photoUrl'],
-        groups: List<String>.from(value['groups'].map((item) {
-          return item;
-        })));
+        groups: value['groups'] == null
+            ? null
+            : List<String>.from(value['groups'].map((item) {
+                return item;
+              })));
   }
 
   Map<String, dynamic> toMap() {
@@ -66,9 +68,11 @@ class Profile extends Equatable {
       'userIdParent': userIdParent,
       'schoolId': schoolId,
       'photoUrl': photoUrl,
-      'groups': groups.map((item) {
-        return item;
-      }).toList(),
+      'groups': groups == null
+          ? null
+          : groups.map((item) {
+              return item;
+            }).toList(),
     };
   }
 }

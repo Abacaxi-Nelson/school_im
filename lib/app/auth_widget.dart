@@ -19,7 +19,6 @@ class AuthWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final authStateChanges = watch(authStateChangesProvider);
-    print("passage authStateChanges");
     return authStateChanges.when(
       data: (user) {
         return FutureBuilder(
@@ -34,9 +33,8 @@ class AuthWidget extends ConsumerWidget {
                   return Container();
                   break;
                 default:
-                  print(snapshot.connectionState);
                   if (snapshot.hasError) {
-                    print('Error: ${snapshot.error}');
+                    print('Error auth_widget: ${snapshot.error}');
                     return Container();
                   } else {
                     return snapshot.data;
@@ -59,14 +57,11 @@ class AuthWidget extends ConsumerWidget {
   }
 
   Future<Widget> _data(BuildContext context, User user) async {
-    print("1");
     if (user == null) {
       return nonSignedInBuilder(context);
     }
-    print("2");
     final database = context.read(databaseProvider);
     final Profile profile = await database.getorCreateProfile(user.uid, 'profile');
-    print("3");
     if (profile.isNewProfile()) {
       return profileBuilder(context);
     } else {

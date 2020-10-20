@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:school_im/app/home/models/suggestion.dart';
+import 'package:school_im/app/home/models/school.dart';
 import 'dart:convert';
 import 'package:school_im/app/home/jobs/empty_content.dart';
 
-class AddressSearch extends SearchDelegate<Suggestion> {
+class AddressSearch extends SearchDelegate<School> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -34,7 +34,7 @@ class AddressSearch extends SearchDelegate<Suggestion> {
     return null;
   }
 
-  Future<List<Suggestion>> fetchSuggestions(String input) async {
+  Future<List<School>> fetchSuggestions(String input) async {
     final response = await http.get(
         'https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre&q=(nature_uai_libe:ECOLE%20DE%20NIVEAU%20ELEMENTAIRE%20AND%20libelle_commune:' +
             input +
@@ -43,8 +43,12 @@ class AddressSearch extends SearchDelegate<Suggestion> {
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       return result['records']
-          .map<Suggestion>((p) => Suggestion(p['recordid'], p['fields']['libelle_commune'],
-              p['fields']['code_postal_uai'], p['fields']['appellation_officielle'], p['fields']['numero_uai']))
+          .map<School>((p) => School(
+              recordid: p['recordid'],
+              libelle_commune: p['fields']['libelle_commune'],
+              code_postal_uai: p['fields']['code_postal_uai'],
+              appellation_officielle: p['fields']['appellation_officielle'],
+              numero_uai: p['fields']['numero_uai']))
           .toList();
     } else {
       throw Exception('Failed to load album');

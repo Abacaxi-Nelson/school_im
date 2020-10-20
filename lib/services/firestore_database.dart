@@ -7,7 +7,7 @@ import 'package:school_im/app/home/models/job.dart';
 import 'package:school_im/app/home/models/profile.dart';
 import 'package:school_im/services/firestore_path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:school_im/app/home/models/suggestion.dart';
+import 'package:school_im/app/home/models/school.dart';
 
 String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
 
@@ -17,40 +17,84 @@ class FirestoreDatabase {
 
   final _service = FirestoreService.instance;
 
-  //////////// CHAT
-  Future<Profile> getorCreateChat(String schoolId, String type) async {}
+  //////////// SCHOOL
+  Future<void> setSchool(School school) => _service.setData(
+        path: FirestorePath.school(school.numero_uai),
+        data: school.toMap(),
+      );
+
+  Future<School> getSchoolOrCreate(School school) async {
+    CollectionReference schoolCol = FirebaseFirestore.instance.collection(FirestorePath.schools());
+    final DocumentSnapshot datasnapshot = await schoolCol.doc(school.numero_uai).get();
+
+    if (!datasnapshot.exists) {
+      await setSchool(school);
+      return school;
+    } else {
+      return School.fromMap(datasnapshot.data());
+    }
+  }
 
   ///
 
   //////////// PROFILE
-  Future<void> setProfileSchool(Profile profile, Suggestion suggestion) => _service.setData(
-        path: FirestorePath.profile(uid, 'school'),
-        data: suggestion.toMap(),
-      );
+  Stream<List<UserInfo>> friendsStream() {
+    print("debut friendsStream => ${FirestorePath.friends(uid)}");
+    return _service.collectionStream(
+      path: FirestorePath.friends(uid),
+      builder: (data, documentId) => UserInfo.fromMap(data),
+    );
+  }
+
+  Stream<School> ProfileBySchoolIdStream({String schoolId}) {
+    return _service.documentStream<School>(
+        path: FirestorePath.school(schoolId),
+        builder: (data, documentID) {
+          print("passage builder ");
+          print(data);
+          print(documentID);
+          return School.fromMap(data);
+        });
+  }
+
+  void findProfileBySchoolId(String schoolId) {
+    print("findProfileBySchoolId");
+    CollectionReference users = FirebaseFirestore.instance.collection(FirestorePath.users());
+    users.where('schoolId', isEqualTo: schoolId).get().then((querySnapshot) {
+      querySnapshot.docs.forEach((result) {
+        print(result.data());
+      });
+    });
+  }
 
   Future<void> setProfile(Profile profile, String type) => _service.setData(
         path: FirestorePath.profile(uid, type),
         data: profile.toMap(),
       );
 
-  Future<Profile> getorCreateProfile(String userId, String type) async {
-    print("1.1");
-    print(FirestorePath.profiles(uid));
-    CollectionReference profile = FirebaseFirestore.instance.collection(FirestorePath.profiles(uid));
-    print("1.11");
+  Future<Profile> getProfile(String userId) async {
+    print('passage getProfile ${FirebaseFirestore.instance.collection(FirestorePath.profiles(uid))}');
+    //final CollectionReference profile = FirebaseFirestore.instance.collection(FirestorePath.profiles(uid));
+    final CollectionReference profile =
+        FirebaseFirestore.instance.collection('/users/pSjOi9DKp0ZwSZevZmvdZUyi1SA3/profiles');
     final DocumentSnapshot datasnapshot = await profile.doc('profile').get();
-    print("2.1");
+    if (datasnapshot.exists) {
+      return Profile.fromMap(datasnapshot.data());
+    } else {
+      return null;
+    }
+  }
+
+  Future<Profile> getorCreateProfile(String userId, String type) async {
+    CollectionReference profile = FirebaseFirestore.instance.collection(FirestorePath.profiles(uid));
+    final DocumentSnapshot datasnapshot = await profile.doc('profile').get();
     if (!datasnapshot.exists) {
-      print("3.1");
       final profile = Profile(userId: userId);
       await setProfile(profile, 'profile');
-      print("4.1");
       return profile;
     } else {
-      print("5.1");
       return Profile.fromMap(datasnapshot.data());
     }
-    print("6.1");
   }
 
   ///END
