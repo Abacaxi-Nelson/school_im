@@ -18,7 +18,8 @@ import 'package:school_im/app/home/chat/chat.dart';
 import 'package:school_im/app/home/jobs/list_items_builder.dart';
 import 'package:badges/badges.dart';
 
-final profilesAtSchoolStreamProvider = StreamProvider.autoDispose.family<School, String>((ref, schoolId) {
+final profilesAtSchoolStreamProvider =
+    StreamProvider.autoDispose.family<School, String>((ref, schoolId) {
   final database = ref.watch(databaseProvider);
   return database != null && schoolId != null
       ? database.ProfileBySchoolIdStream(schoolId: schoolId)
@@ -37,7 +38,8 @@ final groupsStreamProvider = StreamProvider.autoDispose<List<Group>>((ref) {
 
 // watch database
 class DashboardPage extends ConsumerWidget {
-  void handleFAB(BuildContext context, ScopedReader watch, Profile profile) async {
+  void handleFAB(
+      BuildContext context, ScopedReader watch, Profile profile) async {
     final database = context.read(databaseProvider);
     final firebaseAuth = context.read(firebaseAuthProvider);
     final user = firebaseAuth.currentUser;
@@ -50,7 +52,8 @@ class DashboardPage extends ConsumerWidget {
 
     UserInfo userInfo = await showSearch<UserInfo>(
       context: context,
-      delegate: FriendSearchDelegate(data: friends, user: user, requests: requests, blokeds: blokeds),
+      delegate: FriendSearchDelegate(
+          data: friends, user: user, requests: requests, blokeds: blokeds),
     );
 
     print("handleFAB userInfo => ${userInfo}");
@@ -98,11 +101,15 @@ class DashboardPage extends ConsumerWidget {
             elevation: 0.0,
             title: const Text(
               Strings.dashboardPage,
-              style: TextStyle(fontSize: 20.0, color: Color(0xff201F23), fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 20.0,
+                  color: Color(0xff201F23),
+                  fontWeight: FontWeight.bold),
             ),
             actions: <Widget>[
               NotificationFriend(click: () async {
-                await Navigator.of(context).pushNamed(AppRoutes.notificationFriendPage);
+                await Navigator.of(context)
+                    .pushNamed(AppRoutes.notificationFriendPage);
               }),
             ],
           ),
@@ -124,22 +131,27 @@ class DashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildContents(BuildContext context, ScopedReader watch, Profile profile) {
-    final profilesAtSchoolStream = watch(profilesAtSchoolStreamProvider(profile.schoolId));
+  Widget _buildContents(
+      BuildContext context, ScopedReader watch, Profile profile) {
+    final profilesAtSchoolStream =
+        watch(profilesAtSchoolStreamProvider(profile.schoolId));
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-      Container(
-        height: 100.0,
-        //color: Colors.red,
-        //child: _buildHeaderContents(context, watch, profilesAtSchoolStream),
-        child: _buildFriends(context, watch, profile),
-      ),
-      Expanded(child: _buildChats(context, watch, profile)),
-      //Expanded(child: Container()),
-    ]);
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height: 100.0,
+            //color: Colors.red,
+            //child: _buildHeaderContents(context, watch, profilesAtSchoolStream),
+            child: _buildFriends(context, watch, profile),
+          ),
+          Expanded(child: _buildChats(context, watch, profile)),
+          //Expanded(child: Container()),
+        ]);
   }
 
-  Widget _buildChats(BuildContext context, ScopedReader watch, Profile profile) {
+  Widget _buildChats(
+      BuildContext context, ScopedReader watch, Profile profile) {
     final groupsStream = watch(groupsStreamProvider);
     final firebaseAuth = context.read(firebaseAuthProvider);
     final user = firebaseAuth.currentUser;
@@ -168,9 +180,11 @@ class DashboardPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFriends(BuildContext context, ScopedReader watch, Profile profile) {
+  Widget _buildFriends(
+      BuildContext context, ScopedReader watch, Profile profile) {
     final friendsStream = watch(friendsStreamProvider);
-    final profilesAtSchoolStream = watch(profilesAtSchoolStreamProvider(profile.schoolId));
+    final profilesAtSchoolStream =
+        watch(profilesAtSchoolStreamProvider(profile.schoolId));
     final database = context.read(databaseProvider);
     final firebaseAuth = context.read(firebaseAuthProvider);
     final user = firebaseAuth.currentUser;
@@ -190,10 +204,17 @@ class DashboardPage extends ConsumerWidget {
 
               UserInfo userInfo = await showSearch<UserInfo>(
                 context: context,
-                delegate: FriendSearchDelegate(data: school.list, user: user, requests: requests, blokeds: blokeds),
+                delegate: FriendSearchDelegate(
+                    data: school.list,
+                    user: user,
+                    requests: requests,
+                    blokeds: blokeds),
               );
               UserInfo myUserInfo = UserInfo(
-                  name: profile.name, surname: profile.surname, photoUrl: profile.photoUrl, id: profile.userId);
+                  name: profile.name,
+                  surname: profile.surname,
+                  photoUrl: profile.photoUrl,
+                  id: profile.userId);
               await database.setRequest(userInfo.id, myUserInfo);
             },
             loading: () => Container(),
@@ -219,7 +240,9 @@ class DashboardPage extends ConsumerWidget {
 }
 
 class GroupListTile extends StatelessWidget {
-  const GroupListTile({Key key, @required this.group, this.onTap, this.user, this.profile}) : super(key: key);
+  const GroupListTile(
+      {Key key, @required this.group, this.onTap, this.user, this.profile})
+      : super(key: key);
   final Group group;
   final Function onTap;
   final String user;
@@ -258,13 +281,24 @@ class GroupListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     UserInfo userInfo = getUserInfo();
     print("userInfo ${userInfo}");
+
+    Color c = Colors.white;
+    Icon i = Icon(Icons.chevron_right);
+    if (group.unread == null) {
+      c = Colors.white;
+    } else if (group.unread.contains(user)) {
+      Color(0xFFffca5d).withOpacity(0.5);
+      i = Icon(Icons.flash_on);
+    }
+
     return Container(
-        color: group.unread.contains(user) ? Color(0xFFffca5d).withOpacity(0.5) : Colors.white,
+        color: c,
         child: ListTile(
-          leading: Container(width: 40, height: 40, child: getAvatar(userInfo.photoUrl)),
+          leading: Container(
+              width: 40, height: 40, child: getAvatar(userInfo.photoUrl)),
           title: Text('${userInfo.name}'),
           subtitle: Text(getLast(group.last)),
-          trailing: group.unread.contains(user) ? const Icon(Icons.flash_on) : const Icon(Icons.chevron_right),
+          trailing: i,
           onTap: () {
             onTap(userInfo);
           },

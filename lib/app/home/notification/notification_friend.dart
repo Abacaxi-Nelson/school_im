@@ -37,6 +37,8 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
     friends = await database.getFriendProfile();
     profile = await database.getProfile(user.uid);
     print("end ${profile} ");
+    print("===========");
+    print("${friends}");
     setState(() {
       blokeds = blokeds;
       requests = requests;
@@ -50,7 +52,8 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
     if (data.isEmpty) return [Container()];
 
     List<Widget> list = new List<Widget>();
-    list.add(Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)));
+    list.add(Text(label,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)));
     list.add(const SizedBox(height: 20.0));
     list.add(Container(
       decoration: BoxDecoration(
@@ -101,7 +104,8 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
               child: Text(data.surname.toUpperCase()[0]),
               backgroundColor: Color(0xff9188E5),
             ),
-      title: Text('${data.surname} ', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0)),
+      title: Text('${data.surname} ',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0)),
       subtitle: Text('${data.name}', style: const TextStyle(fontSize: 14.0)),
       trailing: type == Type.demande
           ? Wrap(
@@ -121,9 +125,9 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
                     print('datta -> ${data}');
                     UserInfo myUserInfo = profile.toUserInfo();
                     print('myUserInfo -> ${myUserInfo}');
-                    //await database.setFriend(user.uid, data);
+                    await database.setFriend(user.uid, data);
                     print("end1");
-                    //await database.setFriend(data.id, myUserInfo);
+                    await database.setFriend(data.id, myUserInfo);
                     await database.deleteRequest(data);
                     print("end2");
                     init();
@@ -145,11 +149,15 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
         elevation: 0.0,
         title: const Text(
           'Amis',
-          style: TextStyle(fontSize: 22.0, color: Color(0xff201F23), fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 22.0,
+              color: Color(0xff201F23),
+              fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
           FlatButton(
-            child: const Icon(Icons.close, size: 30.0, color: Color(0xff201F23)),
+            child:
+                const Icon(Icons.close, size: 30.0, color: Color(0xff201F23)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],

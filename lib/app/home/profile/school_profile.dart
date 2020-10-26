@@ -49,23 +49,28 @@ class _SchoolProfilePageState extends State<SchoolProfilePage> {
         //resizeToAvoidBottomInset: false,
         backgroundColor: const Color(0xff9188E5),
         body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0), //const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(
+                vertical: 16.0, horizontal: 16.0), //const EdgeInsets.all(16.0),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
                       child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50.0), //const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0), //const EdgeInsets.all(16.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        const SizedBox(height: 20.0),
+                        const SizedBox(height: 10.0),
                         const Text('Super ! Dans quelle école est tu ?',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white)),
-                        const SizedBox(height: 40.0),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.0,
+                                color: Colors.white)),
+                        const SizedBox(height: 20.0),
                         CustomTextField(
                           onTap: () async {
                             final School result = await showSearch(
@@ -78,7 +83,8 @@ class _SchoolProfilePageState extends State<SchoolProfilePage> {
                               setState(() {
                                 school = result;
                                 isEcoleOk = true;
-                                myControllerEcole.text = result.appellation_officielle;
+                                myControllerEcole.text =
+                                    result.appellation_officielle;
                               });
                             }
                           },
@@ -91,24 +97,28 @@ class _SchoolProfilePageState extends State<SchoolProfilePage> {
                       ],
                     ),
                   )),
-                  const Text(
-                      'lorem ipsum; lorem ipsum  lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 12.0, color: Colors.white)),
-                  const SizedBox(height: 20.0),
                   CustomButton(
                     borderColor: Colors.transparent,
-                    color: !isEcoleOk ? Colors.white.withAlpha(50) : const Color(0xffFFCA5D),
-                    color2: !isEcoleOk ? const Color(0xff0D0A06).withAlpha(50) : const Color(0xff0D0A06),
+                    color: !isEcoleOk
+                        ? Colors.white.withAlpha(50)
+                        : const Color(0xffFFCA5D),
+                    color2: !isEcoleOk
+                        ? const Color(0xff0D0A06).withAlpha(50)
+                        : const Color(0xff0D0A06),
                     label: 'Continuer',
                     onPressed: () async {
                       if (isEcoleOk) {
-                        if (widget.profile.email != null) widget.profile.email = widget.profile.email;
+                        if (widget.profile.email != null)
+                          widget.profile.email = widget.profile.email;
                         widget.profile.schoolId = school.numero_uai;
 
-                        await Navigator.of(context, rootNavigator: true).pushNamed(
+                        await Navigator.of(context, rootNavigator: true)
+                            .pushNamed(
                           AppRoutes.parentProfileLastPage,
-                          arguments: {'profile': widget.profile, 'school': school},
+                          arguments: {
+                            'profile': widget.profile,
+                            'school': school
+                          },
                         );
                         /*
                           await Navigator.of(context, rootNavigator: true).pushNamed(
