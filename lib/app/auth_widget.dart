@@ -11,10 +11,12 @@ class AuthWidget extends ConsumerWidget {
     @required this.profileBuilder,
     @required this.signedInBuilder,
     @required this.nonSignedInBuilder,
+    @required this.waitingBuilder,
   }) : super(key: key);
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
   final WidgetBuilder profileBuilder;
+  final WidgetBuilder waitingBuilder;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -60,10 +62,15 @@ class AuthWidget extends ConsumerWidget {
     if (user == null) {
       return nonSignedInBuilder(context);
     }
+
     final database = context.read(databaseProvider);
     final Profile profile = await database.getorCreateProfile(user.uid, 'profile');
+    profile.stringify;
+
     if (profile.isNewProfile()) {
       return profileBuilder(context);
+    } else if (profile.isValide()) {
+      return waitingBuilder(context);
     } else {
       return signedInBuilder(context);
     }

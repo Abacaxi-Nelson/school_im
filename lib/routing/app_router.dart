@@ -14,6 +14,7 @@ import 'package:school_im/app/home/dashboard/dashboard_page.dart';
 import 'package:school_im/app/home/notification/notification_friend.dart';
 import 'package:school_im/app/home/chat/chat.dart';
 import 'package:school_im/app/home/models/group.dart';
+import 'package:school_im/app/home/profile/succes.dart';
 
 class AppRoutes {
   static const emailPasswordSignInPage = '/email-password-sign-in-page';
@@ -25,12 +26,19 @@ class AppRoutes {
   static const dashboardPage = '/dashboard-page';
   static const notificationFriendPage = '/notification-friend-page';
   static const chatPage = '/chat-page';
+  static const succesPage = '/succes-page';
 }
 
 class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings, FirebaseAuth firebaseAuth) {
     final args = settings.arguments;
     switch (settings.name) {
+      case AppRoutes.succesPage:
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => SuccesPage(),
+          settings: settings,
+          fullscreenDialog: false,
+        );
       case AppRoutes.chatPage:
         final mapArgs = args as Map<String, dynamic>;
         final group = mapArgs['group'] as Group;

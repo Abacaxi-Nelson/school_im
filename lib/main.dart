@@ -8,6 +8,8 @@ import 'package:school_im/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_im/app/home/profile/init_profile.dart';
+import 'package:school_im/app/home/profile/init_profile.dart';
+import 'package:school_im/app/home/profile/succes.dart';
 import 'package:school_im/app/home/dashboard/dashboard_page.dart';
 import 'package:school_im/theme.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +38,7 @@ class MyApp extends StatelessWidget {
         profileBuilder: (_) => InitProfilePage(),
         nonSignedInBuilder: (_) => SignInPage(),
         signedInBuilder: (_) => DashboardPage(), //HomePage(),
+        waitingBuilder: (_) => SuccesPage(),
       ),
       onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings, firebaseAuth),
     );

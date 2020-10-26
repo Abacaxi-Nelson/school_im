@@ -14,7 +14,8 @@ class Profile extends Equatable {
       this.userIdParent,
       this.schoolId,
       this.photoUrl,
-      this.groups});
+      this.groups,
+      @required this.valide});
   final String userId;
   String name;
   String surname;
@@ -26,6 +27,11 @@ class Profile extends Equatable {
   String userIdParent;
   String schoolId;
   List<String> groups;
+  bool valide;
+
+  bool isValide() {
+    return valide;
+  }
 
   bool isNewProfile() {
     return name == null;
@@ -33,13 +39,14 @@ class Profile extends Equatable {
 
   @override
   List<Object> get props =>
-      [userId, groups, photoUrl, name, surname, email, phone, emailParent, phoneParent, userIdParent, schoolId];
+      [valide, userId, groups, photoUrl, name, surname, email, phone, emailParent, phoneParent, userIdParent, schoolId];
 
   @override
   bool get stringify => true;
 
   factory Profile.fromMap(Map<dynamic, dynamic> value) {
     return Profile(
+        valide: value['valide'],
         userId: value['userId'],
         name: value['name'],
         surname: value['surname'],
@@ -63,6 +70,7 @@ class Profile extends Equatable {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'valide': valide,
       'userId': userId,
       'name': name,
       'surname': surname,

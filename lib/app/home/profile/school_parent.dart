@@ -6,6 +6,7 @@ import 'package:school_im/app/home/models/profile.dart';
 import 'package:school_im/app/top_level_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_im/routing/app_router.dart';
+import 'package:school_im/app/home/profile/succes.dart';
 
 class ParentProfilePage extends StatefulWidget {
   const ParentProfilePage({@required this.profile, @required this.school});
@@ -80,7 +81,8 @@ class _ParentProfilePageState extends State<ParentProfilePage> {
     // Check if chat exists, or create it
 
     //go to dashboard !!!! tranks to auth change ?
-    await Navigator.of(context, rootNavigator: true).pushNamed(AppRoutes.dashboardPage);
+    //await Navigator.of(context, rootNavigator: true).pushNamed(AppRoutes.dashboardPage);
+    await Navigator.of(context, rootNavigator: true).pushReplacementNamed(AppRoutes.succesPage);
 
     /*
     //final database = context.read(databaseProvider);

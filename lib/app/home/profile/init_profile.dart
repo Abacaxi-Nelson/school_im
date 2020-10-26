@@ -50,10 +50,12 @@ class _InitProfilePageState extends State<InitProfilePage> {
     final firebaseAuth = context.read(firebaseAuthProvider);
     final user = firebaseAuth.currentUser;
     final profile = Profile(
-        photoUrl: user.photoURL != null ? user.photoURL : null,
-        userId: user.uid,
-        name: myControllerNom.text,
-        surname: myControllerPrenom.text);
+      photoUrl: user.photoURL != null ? user.photoURL : null,
+      userId: user.uid,
+      name: myControllerNom.text,
+      surname: myControllerPrenom.text,
+      valide: false,
+    );
     //await database.setProfile(profile);
     //Navigator.of(context).pop();
 
