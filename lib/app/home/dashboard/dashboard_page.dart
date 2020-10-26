@@ -6,8 +6,17 @@ import 'package:school_im/app/home/models/school.dart';
 import 'package:school_im/app/top_level_providers.dart';
 import 'package:school_im/constants/strings.dart';
 import 'package:school_im/app/home/models/profile.dart';
+import 'package:school_im/app/home/models/group.dart';
+import 'package:school_im/app/home/models/message.dart';
+
 import 'package:school_im/app/home/jobs/empty_content.dart';
 import 'package:school_im/app/home/dashboard/friend_search_delegate.dart';
+import 'package:badges/badges.dart';
+import 'package:school_im/app/home/dashboard/notification_friend.dart';
+import 'package:school_im/routing/app_router.dart';
+import 'package:school_im/app/home/chat/chat.dart';
+import 'package:school_im/app/home/jobs/list_items_builder.dart';
+import 'package:badges/badges.dart';
 
 final profilesAtSchoolStreamProvider = StreamProvider.autoDispose.family<School, String>((ref, schoolId) {
   final database = ref.watch(databaseProvider);
@@ -21,44 +30,98 @@ final friendsStreamProvider = StreamProvider.autoDispose<List<UserInfo>>((ref) {
   return database != null ? database.friendsStream() : const Stream.empty();
 });
 
+final groupsStreamProvider = StreamProvider.autoDispose<List<Group>>((ref) {
+  final database = ref.watch(databaseProvider);
+  return database?.groupsStream() ?? const Stream.empty();
+});
+
 // watch database
 class DashboardPage extends ConsumerWidget {
+  void handleFAB(BuildContext context, ScopedReader watch, Profile profile) async {
+    final database = context.read(databaseProvider);
+    final firebaseAuth = context.read(firebaseAuthProvider);
+    final user = firebaseAuth.currentUser;
+
+    List<UserInfo> friends = await database.getFriendProfile();
+    List<String> requests = await database.getRequestIDProfile();
+    List<String> blokeds = await database.getBlokedIDProfile();
+
+    print("handleFAB friends => ${friends}");
+
+    UserInfo userInfo = await showSearch<UserInfo>(
+      context: context,
+      delegate: FriendSearchDelegate(data: friends, user: user, requests: requests, blokeds: blokeds),
+    );
+
+    print("handleFAB userInfo => ${userInfo}");
+
+    startChat(profile, userInfo, context);
+  }
+
+  void startChat(Profile p, UserInfo friend, BuildContext context) async {
+    final database = context.read(databaseProvider);
+
+    // search existing group
+    Group group = await database.getGroupOrCreateIt(p, friend);
+    print("get group dashboard => ${group}");
+
+    // update unread
+    print("group ${group}");
+    if (group.unread != null) {
+      group.unread.remove(p.userId);
+      await database.setGroup(group);
+    }
+
+    //redirect to chat !!!
+    await Navigator.of(context, rootNavigator: true).pushNamed(
+      AppRoutes.chatPage,
+      arguments: {
+        'group': group,
+        'profile': p,
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     AsyncValue<Profile> profile = watch(profileProvider);
-    return Scaffold(
-        appBar: AppBar(
-          elevation: 0.0,
-          title: const Text(
-            Strings.dashboardPage,
-            style: TextStyle(fontSize: 18.0, color: Color(0xff201F23), fontWeight: FontWeight.bold),
+
+    return profile.when(
+      loading: () => const CircularProgressIndicator(),
+      error: (err, stack) => const EmptyContent(
+        title: 'Something went wrong',
+        message: 'Can\'t load data right now.',
+      ),
+      data: (p) {
+        return Scaffold(
+          appBar: AppBar(
+            elevation: 0.0,
+            title: const Text(
+              Strings.dashboardPage,
+              style: TextStyle(fontSize: 20.0, color: Color(0xff201F23), fontWeight: FontWeight.bold),
+            ),
+            actions: <Widget>[
+              NotificationFriend(click: () async {
+                await Navigator.of(context).pushNamed(AppRoutes.notificationFriendPage);
+              }),
+            ],
           ),
-          /*
-          actions: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xffFFCA5D), //remove this when you add image.
-                ),
-                child: Icon(Icons.add, color: Color(0xff201F23)),
-              ),
-            )
-          ],*/
-        ),
-        body: profile.when(
-          loading: () => const CircularProgressIndicator(),
-          error: (err, stack) => EmptyContent(
-            title: 'Something went wrong',
-            message: 'Can\'t load data right now.',
+          body: _buildContents(context, watch, p),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: Color(0xFFffca5d),
+            foregroundColor: Colors.black,
+            elevation: 0.0,
+            onPressed: () {
+              handleFAB(context, watch, p);
+            },
+            child: Icon(
+              Icons.add,
+              size: 30.0,
+            ),
           ),
-          data: (p) {
-            return _buildContents(context, watch, p);
-          },
-        ));
+        );
+      },
+    );
   }
 
   Widget _buildContents(BuildContext context, ScopedReader watch, Profile profile) {
@@ -67,44 +130,72 @@ class DashboardPage extends ConsumerWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Container(
         height: 100.0,
-        color: Colors.red,
+        //color: Colors.red,
         //child: _buildHeaderContents(context, watch, profilesAtSchoolStream),
         child: _buildFriends(context, watch, profile),
       ),
-      Expanded(child: Container()),
+      Expanded(child: _buildChats(context, watch, profile)),
+      //Expanded(child: Container()),
     ]);
   }
 
-  /*
-  Widget _buildHeaderContents(BuildContext context, ScopedReader watch, AsyncValue<School> profilesAtSchoolStream) {
-    return profilesAtSchoolStream.when(
-      data: (school) => ProfileListTile(
-        school: school,
-        onTap: (val) {
-          print(val);
-        },
+  Widget _buildChats(BuildContext context, ScopedReader watch, Profile profile) {
+    final groupsStream = watch(groupsStreamProvider);
+    final firebaseAuth = context.read(firebaseAuthProvider);
+    final user = firebaseAuth.currentUser;
+
+    return ListItemsBuilder<Group>(
+      title: "Pas de données",
+      message: "Ajoutez vos amis, et commencez a discuter !",
+      data: groupsStream,
+      itemBuilder: (context, group) => Dismissible(
+        key: Key('group-${group.id}'),
+        background: Container(color: Colors.red),
+        direction: DismissDirection.endToStart,
+        //onDismissed: (direction) => _delete(context, job),
+        child: GroupListTile(
+          group: group,
+          user: user.uid,
+          profile: profile,
+          onTap: (UserInfo val) {
+            print(val);
+            print("ListItemsBuilder on tap start chat");
+            startChat(profile, val, context);
+          },
+          //onTap: () => JobEntriesPage.show(context, job),
+        ),
       ),
-      loading: () => Container(),
-      error: (_, __) => Container(),
     );
   }
-  */
 
   Widget _buildFriends(BuildContext context, ScopedReader watch, Profile profile) {
     final friendsStream = watch(friendsStreamProvider);
     final profilesAtSchoolStream = watch(profilesAtSchoolStreamProvider(profile.schoolId));
+    final database = context.read(databaseProvider);
+    final firebaseAuth = context.read(firebaseAuthProvider);
+    final user = firebaseAuth.currentUser;
+    //firebaseAuth.signOut();
 
     return friendsStream.when(
       data: (userInfo) => ProfileListTile(
         userInfo: userInfo,
         addFriend: () {
-          print("addFriend");
-
           return profilesAtSchoolStream.when(
-            data: (school) => showSearch(
-              context: context,
-              delegate: FriendSearchDelegate(school: school),
-            ),
+            data: (school) async {
+              List<String> requests = await database.getRequestIDProfile();
+              //print("requests: ${requests}");
+
+              List<String> blokeds = await database.getBlokedIDProfile();
+              //print("blokeds: ${blokeds}");
+
+              UserInfo userInfo = await showSearch<UserInfo>(
+                context: context,
+                delegate: FriendSearchDelegate(data: school.list, user: user, requests: requests, blokeds: blokeds),
+              );
+              UserInfo myUserInfo = UserInfo(
+                  name: profile.name, surname: profile.surname, photoUrl: profile.photoUrl, id: profile.userId);
+              await database.setRequest(userInfo.id, myUserInfo);
+            },
             loading: () => Container(),
             error: (_, __) => Container(),
           );
@@ -115,12 +206,68 @@ class DashboardPage extends ConsumerWidget {
           );
           */
         },
-        onTap: (val) {
+        onTap: (UserInfo val) {
           print(val);
+          print("on tap start chat");
+          startChat(profile, val, context);
         },
       ),
       loading: () => Container(),
       error: (_, __) => Container(),
     );
+  }
+}
+
+class GroupListTile extends StatelessWidget {
+  const GroupListTile({Key key, @required this.group, this.onTap, this.user, this.profile}) : super(key: key);
+  final Group group;
+  final Function onTap;
+  final String user;
+  final Profile profile;
+
+  UserInfo getUserInfo() {
+    UserInfo userInfo;
+    group.membersWithInfo.forEach((profile) {
+      print("user ${user}");
+      print("---> ${profile}");
+      if (profile.id != user) userInfo = profile;
+    });
+    print("end ${userInfo}");
+    return userInfo;
+  }
+
+  String getLast(MessageWithoutId m) {
+    if (m == null) return "";
+    if (m.image != null) return "Image";
+    if (m.text == null) return "";
+    int length = m.text.length;
+    return m.text.substring(0, length > 40 ? 40 : length) + "...";
+  }
+
+  Widget getAvatar(String photoUrl) {
+    return photoUrl == null
+        ? Container()
+        : CircleAvatar(
+            radius: 15.0,
+            backgroundImage: NetworkImage(photoUrl),
+            backgroundColor: Colors.transparent,
+          );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    UserInfo userInfo = getUserInfo();
+    print("userInfo ${userInfo}");
+    return Container(
+        color: group.unread.contains(user) ? Color(0xFFffca5d).withOpacity(0.5) : Colors.white,
+        child: ListTile(
+          leading: Container(width: 40, height: 40, child: getAvatar(userInfo.photoUrl)),
+          title: Text('${userInfo.name}'),
+          subtitle: Text(getLast(group.last)),
+          trailing: group.unread.contains(user) ? const Icon(Icons.flash_on) : const Icon(Icons.chevron_right),
+          onTap: () {
+            onTap(userInfo);
+          },
+        ));
   }
 }

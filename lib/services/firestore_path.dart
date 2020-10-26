@@ -12,8 +12,8 @@ class FirestorePath {
   static String groups() => 'groups';
   static String group(String groupId) => 'groups/$groupId';
 
-  static String messages() => 'messages';
-  static String message(String groupId) => 'messages/$groupId';
+  static String messages(String groupId) => 'messages/$groupId/messages/';
+  static String message(String groupId, String messageID) => 'messages/$groupId/messages/$messageID';
 
   static String schools() => 'schools';
   static String school(String schoolId) => 'schools/$schoolId';
@@ -21,6 +21,8 @@ class FirestorePath {
   static String friend(String uid, String friendID) => 'users/$uid/friends/$friendID';
   static String friends(String uid) => 'users/$uid/friends';
 
+  static String request(String uid, String id) => 'users/$uid/requests/$id';
   static String requests(String uid) => 'users/$uid/requests';
+  static String bloked(String uid, String id) => 'users/$uid/blokeds/$id';
   static String blokeds(String uid) => 'users/$uid/blokeds';
 }

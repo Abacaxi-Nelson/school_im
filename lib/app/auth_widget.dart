@@ -29,7 +29,7 @@ class AuthWidget extends ConsumerWidget {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
                 case ConnectionState.waiting:
-                  print('loading...');
+                  //print('loading...');
                   return Container();
                   break;
                 default:

@@ -3,9 +3,12 @@ import 'package:school_im/app/home/models/profile.dart';
 import 'package:school_im/app/home/jobs/list_items_builder.dart';
 import 'package:school_im/app/home/models/school.dart';
 
-class FriendSearchDelegate extends SearchDelegate {
+class FriendSearchDelegate extends SearchDelegate<UserInfo> {
   FriendSearchDelegate({
-    @required this.school,
+    @required this.data,
+    @required this.user,
+    @required this.requests,
+    @required this.blokeds,
     String hintText = 'Recherche',
   }) : super(
           searchFieldLabel: hintText,
@@ -13,7 +16,10 @@ class FriendSearchDelegate extends SearchDelegate {
           textInputAction: TextInputAction.search,
         );
 
-  final school;
+  final data;
+  final user;
+  final List<String> requests;
+  final List<String> blokeds;
 
   @override
   String get searchFieldLabel => 'Recherche';
@@ -51,51 +57,43 @@ class FriendSearchDelegate extends SearchDelegate {
     );
   }
 
+  Widget listView(BuildContext context, bool full, String query) {
+    print("requests: ${requests}");
+    if (full) {
+      return ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          if (data[index].id == user.uid) return Container();
+          if (requests != null && requests.contains(data[index].id)) return Container();
+
+          return ListTile(
+              title: Text('${data[index].surname} ${data[index].name}'), onTap: () => close(context, data[index]));
+        },
+      );
+    } else {
+      return ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          if (data[index].id == user.uid) return Container();
+          if (requests != null && requests.contains(data[index].id)) return Container();
+
+          return data[index].surname.toLowerCase().contains(query.toLowerCase()) ||
+                  data[index].name.toLowerCase().contains(query.toLowerCase())
+              ? ListTile(
+                  title: Text('${data[index].surname} ${data[index].name}'), onTap: () => close(context, data[index]))
+              : Container();
+        },
+      );
+    }
+  }
+
   @override
   Widget buildResults(BuildContext context) {
-    return query.isEmpty
-        ? ListView.builder(
-            itemCount: school.list.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text('${school.list[index].surname} ${school.list[index].name}'),
-              );
-            },
-          )
-        : ListView.builder(
-            itemCount: school.list.length,
-            itemBuilder: (context, index) {
-              return school.list[index].surname.toLowerCase().contains(query.toLowerCase()) ||
-                      school.list[index].name.toLowerCase().contains(query.toLowerCase())
-                  ? ListTile(
-                      title: Text('${school.list[index].surname} ${school.list[index].name}'),
-                    )
-                  : Container();
-            },
-          );
+    return query.isEmpty ? listView(context, true, query) : listView(context, false, query);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return !query.isEmpty
-        ? ListView.builder(
-            itemCount: school.list.length,
-            itemBuilder: (context, index) {
-              return school.list[index].surname.toLowerCase().contains(query.toLowerCase()) ||
-                      school.list[index].name.toLowerCase().contains(query.toLowerCase())
-                  ? ListTile(
-                      title: Text('${school.list[index].surname} ${school.list[index].name}'),
-                    )
-                  : Container();
-            },
-          )
-        : ListView.builder(
-            itemCount: school.list.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text('${school.list[index].surname} ${school.list[index].name}'),
-              );
-            },
-          );
+    return !query.isEmpty ? listView(context, true, query) : listView(context, false, query);
   }
 }

@@ -9,9 +9,7 @@ final firebaseAuthProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instan
 
 final authStateChangesProvider = StreamProvider<User>((ref) => ref.watch(firebaseAuthProvider).authStateChanges());
 
-//MARCHE PAS why ??
 final profileProvider = FutureProvider<Profile>((ref) async {
-  print("PASSAGGEEEE ////// //////");
   final auth = ref.watch(authStateChangesProvider);
   final db = ref.watch(databaseProvider);
 

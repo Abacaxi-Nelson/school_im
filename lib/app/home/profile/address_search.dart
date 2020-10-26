@@ -5,6 +5,27 @@ import 'dart:convert';
 import 'package:school_im/app/home/jobs/empty_content.dart';
 
 class AddressSearch extends SearchDelegate<School> {
+  AddressSearch()
+      : super(
+          searchFieldLabel: 'Recherche',
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.search,
+        );
+
+  @override
+  String get searchFieldLabel => 'Recherche';
+
+  @override
+  TextStyle get searchFieldStyle => TextStyle(color: Colors.white);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return ThemeData(
+      primaryColor: Color(0xff9188E5),
+      textTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
+    );
+  }
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [

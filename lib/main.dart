@@ -10,9 +10,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_im/app/home/profile/init_profile.dart';
 import 'package:school_im/app/home/dashboard/dashboard_page.dart';
 import 'package:school_im/theme.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Intl.defaultLocale = "fr_FR";
+  initializeDateFormatting('fr_FR', null);
+
   await Firebase.initializeApp();
   runApp(ProviderScope(
     child: MyApp(),

@@ -13,6 +13,7 @@ import 'package:school_im/routing/app_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:apple_sign_in/apple_sign_in.dart' as ios;
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 final signInModelProvider = ChangeNotifierProvider<SignInViewModel>(
   (ref) => SignInViewModel(auth: ref.watch(firebaseAuthProvider)),
@@ -77,20 +78,34 @@ class SignInPageContents extends StatelessWidget {
     );
   }
 
+  Widget androidWidget() {
+    return GoogleSignInButton(
+      onPressed: () {
+        viewModel.isLoading ? null : viewModel.signInGoogle();
+      },
+      darkMode: false, // default: false
+    );
+  }
+
   Widget iosWidget() {
     return FutureBuilder(
       builder: (context, projectSnap) {
         if (projectSnap.connectionState == ConnectionState.none && projectSnap.hasData == null) {
           return const SizedBox(height: 0.0);
         }
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: ios.AppleSignInButton(
-            style: ios.ButtonStyle.white,
-            type: ios.ButtonType.signIn,
-            onPressed: viewModel.isLoading ? null : viewModel.signInIos,
-          ),
-        );
+        if (projectSnap.data != false) {
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: ios.AppleSignInButton(
+              style: ios.ButtonStyle.white,
+              type: ios.ButtonType.signIn,
+              onPressed: viewModel.isLoading ? null : viewModel.signInIos,
+            ),
+          );
+        } else {
+          //print("error apple signin not available");
+          return Padding(padding: const EdgeInsets.all(20.0), child: androidWidget());
+        }
       },
       future: AppleSignIn.isAvailable(),
     );
@@ -145,7 +160,6 @@ class SignInPageContents extends StatelessWidget {
                     onDotClicked: (index) {}),
                 SizedBox(height: 20.0),
                 iosWidget(),
-                SizedBox(height: 40.0),
               ],
             ),
           ),

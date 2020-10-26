@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignInViewModel with ChangeNotifier {
   SignInViewModel({@required this.auth});
@@ -31,6 +32,32 @@ class SignInViewModel with ChangeNotifier {
     await _signIn(auth.signInAnonymously);
   }
 
+  Future<void> signInGoogle() async {
+    isLoading = true;
+    notifyListeners();
+
+    final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
+    final GoogleSignInAccount googleUser = await googleSignIn.signIn();
+
+    if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await auth.signInWithCredential(credential);
+    } else {
+      isLoading = false;
+      notifyListeners();
+      print('googleUser is null');
+      throw PlatformException(
+        code: 'ERROR_AUTHORIZATION_DENIED',
+        message: 'googleUser is null',
+      );
+    }
+  }
+
   Future<void> signInIos() async {
     isLoading = true;
     notifyListeners();
@@ -47,6 +74,10 @@ class SignInViewModel with ChangeNotifier {
           idToken: String.fromCharCodes(appleIdCredential.identityToken),
           accessToken: String.fromCharCodes(appleIdCredential.authorizationCode),
         );
+
+        print("credentials");
+        print(String.fromCharCodes(appleIdCredential.identityToken));
+        print(String.fromCharCodes(appleIdCredential.authorizationCode));
 
         if (scopes.contains(Scope.fullName)) {
           print(appleIdCredential.email);

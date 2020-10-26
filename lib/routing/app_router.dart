@@ -9,7 +9,11 @@ import 'package:school_im/app/home/models/profile.dart';
 import 'package:school_im/app/home/models/school.dart';
 import 'package:school_im/app/home/profile/school_profile.dart';
 import 'package:school_im/app/home/profile/school_parent.dart';
+import 'package:school_im/app/home/profile/school_parent_last.dart';
 import 'package:school_im/app/home/dashboard/dashboard_page.dart';
+import 'package:school_im/app/home/notification/notification_friend.dart';
+import 'package:school_im/app/home/chat/chat.dart';
+import 'package:school_im/app/home/models/group.dart';
 
 class AppRoutes {
   static const emailPasswordSignInPage = '/email-password-sign-in-page';
@@ -17,16 +21,43 @@ class AppRoutes {
   static const entryPage = '/entry-page';
   static const schoolProfilePage = '/school-profile-page';
   static const parentProfilePage = '/school-parent-page';
+  static const parentProfileLastPage = '/school-parent-last-page';
   static const dashboardPage = '/dashboard-page';
+  static const notificationFriendPage = '/notification-friend-page';
+  static const chatPage = '/chat-page';
 }
 
 class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings, FirebaseAuth firebaseAuth) {
     final args = settings.arguments;
     switch (settings.name) {
+      case AppRoutes.chatPage:
+        final mapArgs = args as Map<String, dynamic>;
+        final group = mapArgs['group'] as Group;
+        final profile = mapArgs['profile'] as Profile;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => ChatPage(profile: profile, group: group),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case AppRoutes.notificationFriendPage:
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => NotificationFriendPage(),
+          settings: settings,
+          fullscreenDialog: false,
+        );
       case AppRoutes.dashboardPage:
         return MaterialPageRoute<dynamic>(
           builder: (_) => DashboardPage(),
+          settings: settings,
+          fullscreenDialog: false,
+        );
+      case AppRoutes.parentProfileLastPage:
+        final mapArgs = args as Map<String, dynamic>;
+        final profile = mapArgs['profile'] as Profile;
+        final school = mapArgs['school'] as School;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => ParentProfileLastPage(profile: profile, school: school),
           settings: settings,
           fullscreenDialog: false,
         );

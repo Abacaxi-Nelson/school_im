@@ -5,22 +5,27 @@ import 'package:school_im/app/home/jobs/empty_content.dart';
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
 class ListItemsBuilder<T> extends StatelessWidget {
-  const ListItemsBuilder({
-    Key key,
-    @required this.data,
-    @required this.itemBuilder,
-  }) : super(key: key);
+  ListItemsBuilder({Key key, @required this.data, @required this.itemBuilder, this.title, this.message})
+      : super(key: key);
   final AsyncValue<List<T>> data;
   final ItemWidgetBuilder<T> itemBuilder;
+  String title;
+  String message;
 
   @override
   Widget build(BuildContext context) {
+    print(title.isEmpty ? 'Something went wrong' : title);
     return data.when(
-      data: (items) => items.isNotEmpty ? _buildList(items) : const EmptyContent(),
+      data: (items) => items.isNotEmpty
+          ? _buildList(items)
+          : EmptyContent(
+              title: title.isEmpty ? 'Something went wrong' : title,
+              message: message.isEmpty ? 'Can\'t load items right now' : message,
+            ),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => const EmptyContent(
-        title: 'Something went wrong',
-        message: 'Can\'t load items right now',
+      error: (_, __) => EmptyContent(
+        title: title.isEmpty ? 'Something went wrong' : title,
+        message: message.isEmpty ? 'Can\'t load items right now' : message,
       ),
     );
   }

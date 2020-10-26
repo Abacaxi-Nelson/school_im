@@ -1,4 +1,4 @@
-package com.example.school_im
+package com.abacaxi.school.app
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

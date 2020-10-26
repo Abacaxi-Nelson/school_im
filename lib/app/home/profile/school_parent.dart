@@ -59,12 +59,22 @@ class _ParentProfilePageState extends State<ParentProfilePage> {
     widget.profile.schoolId = widget.school.numero_uai;
     await database.setProfile(widget.profile, 'profile');
 
+    print("Dans school_parent, school recu : ");
     widget.school.stringify;
-    UserInfo userInfo =
-        UserInfo(surname: widget.profile.surname, photoUrl: widget.profile.photoUrl, id: widget.profile.userId);
-    widget.school.addMember(userInfo);
-    widget.school.stringify;
-    await database.setSchool(widget.school);
+
+    print("Dans school_parent, school demande : ");
+    School sc = await database.getSchoolOrCreate(widget.school);
+    sc.stringify;
+
+    UserInfo userInfo = UserInfo(
+        name: widget.profile.name,
+        surname: widget.profile.surname,
+        photoUrl: widget.profile.photoUrl,
+        id: widget.profile.userId);
+    sc.addMember(userInfo);
+    sc.stringify;
+    await database.setSchool(sc);
+
     //await database.setProfileSchool(widget.profile, widget.suggestion);
     //await database.setProfileChat(widget.profile, widget.suggestion);
     // Check if chat exists, or create it

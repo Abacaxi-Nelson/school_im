@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:school_im/app/home/models/school.dart';
 
 class Profile extends Equatable {
   Profile(
@@ -54,6 +55,10 @@ class Profile extends Equatable {
             : List<String>.from(value['groups'].map((item) {
                 return item;
               })));
+  }
+
+  UserInfo toUserInfo() {
+    return UserInfo(name: name, surname: surname, photoUrl: photoUrl, id: userId);
   }
 
   Map<String, dynamic> toMap() {

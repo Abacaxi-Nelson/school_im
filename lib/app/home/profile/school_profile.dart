@@ -107,9 +107,16 @@ class _SchoolProfilePageState extends State<SchoolProfilePage> {
                         widget.profile.schoolId = school.numero_uai;
 
                         await Navigator.of(context, rootNavigator: true).pushNamed(
+                          AppRoutes.parentProfileLastPage,
+                          arguments: {'profile': widget.profile, 'school': school},
+                        );
+                        /*
+                          await Navigator.of(context, rootNavigator: true).pushNamed(
                           AppRoutes.parentProfilePage,
                           arguments: {'profile': widget.profile, 'school': school},
                         );
+                        */
+
                       }
                     },
                   ),
