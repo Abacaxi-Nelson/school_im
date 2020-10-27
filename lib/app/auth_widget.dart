@@ -20,7 +20,51 @@ class AuthWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    final profile = watch(profileProvider);
+
+    return profile.when(
+      data: (profile) => _data(context, profile),
+      loading: () => const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (_, __) => const Scaffold(
+        body: EmptyContent(
+          title: 'Something went wrong',
+          message: 'Can\'t load data right now.',
+        ),
+      ),
+    );
+  }
+
+  Widget _data(BuildContext context, Profile profile) {
+    print("repassage");
+    print("profile ${profile}");
+
+    if (profile == null) {
+      print("on va retourner nonSignedInBuilder ");
+      print(nonSignedInBuilder);
+      return nonSignedInBuilder(context);
+    }
+
+    profile.stringify;
+    print(profile);
+
+    if (profile.isNewProfile()) {
+      return profileBuilder(context);
+    } else if (!profile.isValide()) {
+      return waitingBuilder(context);
+    } else {
+      return signedInBuilder(context);
+    }
+  }
+
+  /*
+  @override
+  Widget build(BuildContext context, ScopedReader watch) {
     final authStateChanges = watch(authStateChangesProvider);
+    
     return authStateChanges.when(
       data: (user) {
         print("CHANGEMENT ETAT");
@@ -60,6 +104,7 @@ class AuthWidget extends ConsumerWidget {
       ),
     );
   }
+  
 
   Future<Widget> _data(BuildContext context, User user) async {
     print("repassage");
@@ -87,4 +132,5 @@ class AuthWidget extends ConsumerWidget {
       return signedInBuilder(context);
     }
   }
+  */
 }

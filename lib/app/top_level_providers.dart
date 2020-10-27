@@ -13,9 +13,14 @@ final profileProvider = FutureProvider<Profile>((ref) async {
   final auth = ref.watch(authStateChangesProvider);
   final db = ref.watch(databaseProvider);
 
+  print("CHANGEMENT ETAT profileProvider ");
+  print("auth.data?.value?.uid ${auth.data?.value?.uid} ");
+
   if (auth.data?.value?.uid != null) {
+    print("retourner NON  NULL ");
     return db.getProfile(auth.data?.value?.uid);
   }
+  print("retourner NULL ");
   return null;
   //return db.getProfile("pSjOi9DKp0ZwSZevZmvdZUyi1SA3");
 });

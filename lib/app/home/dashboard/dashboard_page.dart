@@ -114,16 +114,6 @@ class DashboardPage extends ConsumerWidget {
               );
             },
           ),
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: FlatButton(
-                key: const Key("Se deconnecter"),
-                child: const Icon(Icons.logout, color: Color(0xff201F23)),
-                onPressed: () => firebaseAuth.signOut(),
-              ),
-            ),
-          ),
         ],
       ),
     );

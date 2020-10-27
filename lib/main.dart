@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // MultiProvider for top-level services that don't depend on any runtime values (e.g. uid)
     final firebaseAuth = context.read(firebaseAuthProvider);
+    //firebaseAuth.signOut();
     return MaterialApp(
       theme: MyTheme.defaultTheme,
       debugShowCheckedModeBanner: false,

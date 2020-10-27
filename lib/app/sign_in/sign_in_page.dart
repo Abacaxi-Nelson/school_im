@@ -115,17 +115,24 @@ class SignInPageContents extends StatelessWidget {
   Widget _getBody(BuildContext context) {
     List<Widget> pages = [
       Container(
-        color: Color(0xff9188E5),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("landing1.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
       Container(
-        color: Colors.red,
-      ),
-      Container(
-        color: Color(0xff9188E5),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("landing2.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
     ];
     final controller = PageController(
-      initialPage: 1,
+      initialPage: 0,
     );
 
     return Stack(
@@ -156,8 +163,8 @@ class SignInPageContents extends StatelessWidget {
                         dotHeight: 10.0,
                         paintStyle: PaintingStyle.stroke,
                         strokeWidth: 1.5,
-                        dotColor: Color(0xffC1BCF2),
-                        activeDotColor: Colors.white), // your preferred effect
+                        dotColor: Colors.black,
+                        activeDotColor: Colors.black), // your preferred effect
                     onDotClicked: (index) {}),
                 SizedBox(height: 20.0),
                 iosWidget(),
