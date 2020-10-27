@@ -233,7 +233,7 @@ class FirestoreDatabase {
     CollectionReference profile = FirebaseFirestore.instance.collection(FirestorePath.profiles(uid));
     final DocumentSnapshot datasnapshot = await profile.doc('profile').get();
     if (!datasnapshot.exists) {
-      final profile = Profile(userId: userId);
+      final profile = Profile(userId: userId, valide: false);
       await setProfile(profile, 'profile');
       return profile;
     } else {
