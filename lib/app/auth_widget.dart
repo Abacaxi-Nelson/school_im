@@ -64,8 +64,7 @@ class AuthWidget extends ConsumerWidget {
     }
 
     final database = context.read(databaseProvider);
-    final Profile profile =
-        await database.getorCreateProfile(user.uid, 'profile');
+    final Profile profile = await database.getorCreateProfile(user.uid, 'profile');
     profile.stringify;
     print(profile);
 

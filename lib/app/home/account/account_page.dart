@@ -13,6 +13,7 @@ import 'package:pedantic/pedantic.dart';
 class AccountPage extends StatelessWidget {
   Future<void> _signOut(BuildContext context, FirebaseAuth firebaseAuth) async {
     try {
+      print("signout");
       await firebaseAuth.signOut();
     } catch (e) {
       unawaited(showExceptionAlertDialog(
@@ -43,17 +44,13 @@ class AccountPage extends StatelessWidget {
     final user = firebaseAuth.currentUser;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(Strings.accountPage),
+        iconTheme: IconThemeData(
+          color: Color(0xff201F23), //change your color here
+        ),
         actions: <Widget>[
           FlatButton(
             key: const Key(Keys.logout),
-            child: const Text(
-              Strings.logout,
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-              ),
-            ),
+            child: const Icon(Icons.logout, color: Color(0xff201F23)),
             onPressed: () => _confirmSignOut(context, firebaseAuth),
           ),
         ],
@@ -78,7 +75,7 @@ class AccountPage extends StatelessWidget {
         if (user.displayName != null)
           Text(
             user.displayName,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(),
           ),
         const SizedBox(height: 8),
       ],

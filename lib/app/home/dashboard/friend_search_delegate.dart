@@ -57,6 +57,20 @@ class FriendSearchDelegate extends SearchDelegate<UserInfo> {
     );
   }
 
+  Widget getAvatar(String photoUrl, String name) {
+    return photoUrl == null
+        ? CircleAvatar(
+            radius: 15.0,
+            child: Text(name.toUpperCase()[0], style: const TextStyle(color: Color(0xff9188E5))),
+            backgroundColor: Colors.white,
+          )
+        : CircleAvatar(
+            radius: 15.0,
+            backgroundImage: NetworkImage(photoUrl),
+            backgroundColor: Colors.transparent,
+          );
+  }
+
   Widget listView(BuildContext context, bool full, String query) {
     print("requests: ${requests}");
     if (full) {
@@ -67,7 +81,9 @@ class FriendSearchDelegate extends SearchDelegate<UserInfo> {
           if (requests != null && requests.contains(data[index].id)) return Container();
 
           return ListTile(
-              title: Text('${data[index].surname} ${data[index].name}'), onTap: () => close(context, data[index]));
+              leading: getAvatar(data[index].photoUrl, data[index].surname),
+              title: Text('${data[index].surname} ${data[index].name}'),
+              onTap: () => close(context, data[index]));
         },
       );
     } else {
@@ -80,7 +96,9 @@ class FriendSearchDelegate extends SearchDelegate<UserInfo> {
           return data[index].surname.toLowerCase().contains(query.toLowerCase()) ||
                   data[index].name.toLowerCase().contains(query.toLowerCase())
               ? ListTile(
-                  title: Text('${data[index].surname} ${data[index].name}'), onTap: () => close(context, data[index]))
+                  leading: getAvatar(data[index].photoUrl, data[index].surname),
+                  title: Text('${data[index].surname} ${data[index].name}'),
+                  onTap: () => close(context, data[index]))
               : Container();
         },
       );

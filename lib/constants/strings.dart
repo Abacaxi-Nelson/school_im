@@ -4,7 +4,7 @@ class Strings {
   static const String cancel = 'Cancel';
 
   // Logout
-  static const String logout = 'Logout';
+  static const String logout = 'Se deconnecter';
   static const String logoutAreYouSure = 'Are you sure that you want to logout?';
   static const String logoutFailed = 'Logout failed';
 

@@ -19,13 +19,24 @@ final chatStreamProvider = StreamProvider.autoDispose.family<List<Message>, Grou
   return database?.chatStream(group) ?? const Stream.empty();
 });
 
-// watch database
-class ChatPage extends ConsumerWidget {
-  ChatPage({@required this.profile, @required this.group});
+class ChatPage extends StatefulWidget {
+  const ChatPage({@required this.profile, @required this.group});
   final Profile profile;
   final Group group;
+
+  @override
+  _ChatPageState createState() => _ChatPageState();
+}
+
+// watch database
+class _ChatPageState extends State<ChatPage> {
+//class ChatPage extends ConsumerWidget {
+  //ChatPage({@required this.profile, @required this.group});
+  //final Profile profile;
+  //final Group group;
   final picker = ImagePicker();
   FirestoreDatabase database;
+  bool showProgress = false;
 
   Widget showTitle(BuildContext context) {
     final database = context.read(databaseProvider);
@@ -33,7 +44,7 @@ class ChatPage extends ConsumerWidget {
     final user = firebaseAuth.currentUser;
 
     String fiendId = "";
-    for (final id in group.members) {
+    for (final id in widget.group.members) {
       if (id != user.uid) {
         fiendId = id;
         break;
@@ -79,29 +90,46 @@ class ChatPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context) {
+    //Widget build(BuildContext context, ScopedReader watch) {
     database = context.read(databaseProvider);
 
     return Scaffold(
-      //backgroundColor: Colors.red,
-      appBar: AppBar(
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: Colors.black, //change your color here
-        ),
-        title: showTitle(context),
-        actions: <Widget>[
-          FlatButton(
-            child: const Icon(Icons.more_horiz, size: 30.0, color: Color(0xff201F23)),
-            onPressed: () => Navigator.of(context).pop(),
+        //backgroundColor: Colors.red,
+        appBar: AppBar(
+          elevation: 0,
+          iconTheme: IconThemeData(
+            color: Colors.black, //change your color here
           ),
-        ],
-      ),
-      body: _buildContents(context, watch),
-    );
+          title: showTitle(context),
+          actions: <Widget>[
+            FlatButton(
+              child: const Icon(Icons.more_horiz, size: 30.0, color: Color(0xff201F23)),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+        body: Container(
+          decoration: BoxDecoration(
+            border: Border(top: BorderSide(width: 2.0, color: Color(0xffEEEEEE))),
+            image: const DecorationImage(
+              image: const AssetImage("bg.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: showProgress
+              ? const Center(child: CircularProgressIndicator())
+              : Consumer(
+                  builder: (context, watch, child) {
+                    return _buildContents(context, watch);
+                  },
+                ),
+          //_buildContents(context, watch),
+        ));
   }
 
   void onSend(ChatMessage message) async {
+    print("///////////////// passage onSend");
     print(message.toJson());
     print(message.user.name);
 
@@ -112,27 +140,27 @@ class ChatPage extends ConsumerWidget {
         createdByName: message.user.name,
         createdBy: message.user.uid);
 
-    await database.setMessage(group, mess);
+    await database.setMessage(widget.group, mess);
 
     print("update group");
-    group.last = mess.toMessageWithoutId();
-    print(group.last);
+    widget.group.last = mess.toMessageWithoutId();
+    print(widget.group.last);
 
-    if (group.unread == null) group.unread = List<String>();
-    group.membersWithInfo.forEach((profile) {
-      if (profile.id != message.user.uid) group.unread.add(profile.id);
+    if (widget.group.unread == null) widget.group.unread = List<String>();
+    widget.group.membersWithInfo.forEach((profile) {
+      if (profile.id != message.user.uid) widget.group.unread.add(profile.id);
     });
 
-    await database.setGroup(group);
+    await database.setGroup(widget.group);
   }
 
   Widget _buildContents(BuildContext context, ScopedReader watch) {
-    final chatStream = watch(chatStreamProvider(group));
+    final chatStream = watch(chatStreamProvider(widget.group));
     final database = context.read(databaseProvider);
 
-    print("passage");
+    print("passage _buildContents");
     return chatStream.when(
-        data: (items) => _buildChat(profile, group, items, context),
+        data: (items) => _buildChat(widget.profile, widget.group, items, context),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) {
           print(error);
@@ -168,12 +196,13 @@ class ChatPage extends ConsumerWidget {
           ),
         );
       },
+      inputMaxLines: 5,
       dateFormat: DateFormat('dd MMMM yyyy'),
       timeFormat: DateFormat('HH:mm'),
-      shouldShowLoadEarlier: false,
-      //onLoadEarlier: () async {
-      //  if (chat.moreMessagesAvailable) chat.getPreviousMessages();
-      //},
+      shouldShowLoadEarlier: true,
+      onLoadEarlier: () async {
+        print("onLoadEarlier");
+      },
       onSend: onSend,
       /*chat.sendTextMessage(message: _.text)*/
       textInputAction: TextInputAction.send,
@@ -205,12 +234,19 @@ class ChatPage extends ConsumerWidget {
         IconButton(
             icon: Icon(Icons.image, color: Theme.of(context).accentColor),
             onPressed: () async {
+              setState(() {
+                showProgress = true;
+              });
+
+              print("start uploading");
               final image = await picker.getImage(source: ImageSource.gallery);
               if (image != null) {
+                print("image is not null");
                 final compressedFile = await FlutterNativeImage.compressImage(image.path, quality: 80, percentage: 90);
                 print(image);
                 print(compressedFile);
-                final StorageReference storageRef = FirebaseStorage.instance.ref().child("chat_images");
+                final StorageReference storageRef =
+                    FirebaseStorage.instance.ref().child(DateTime.now().toIso8601String());
                 StorageUploadTask uploadTask = storageRef.putFile(
                   compressedFile,
                   StorageMetadata(
@@ -218,7 +254,11 @@ class ChatPage extends ConsumerWidget {
                   ),
                 );
                 StorageTaskSnapshot download = await uploadTask.onComplete;
+                print("download done");
+
                 String url = await download.ref.getDownloadURL();
+                print("url ${url}");
+
                 ChatMessage message = ChatMessage(text: "", user: chatUser, image: url);
 
                 Message mess = new Message(
@@ -228,7 +268,12 @@ class ChatPage extends ConsumerWidget {
                     createdByName: profile.surname,
                     createdBy: profile.userId,
                     image: url);
+
+                print("on va envoyer");
                 await database.setMessage(group, mess);
+                setState(() {
+                  showProgress = false;
+                });
               }
             }),
       ],
@@ -242,7 +287,7 @@ class ChatPage extends ConsumerWidget {
             (e) => ChatMessage(
               id: e.id,
               text: e.text,
-              //image: e.image,
+              image: e.image,
               createdAt: e.createdDate,
               user: ChatUser(uid: e.createdBy, name: e.createdByName),
               //user: ChatUser(uid: e.from, name: e.fromName),

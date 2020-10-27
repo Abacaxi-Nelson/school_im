@@ -52,8 +52,7 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
     if (data.isEmpty) return [Container()];
 
     List<Widget> list = new List<Widget>();
-    list.add(Text(label,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)));
+    list.add(Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)));
     list.add(const SizedBox(height: 20.0));
     list.add(Container(
       decoration: BoxDecoration(
@@ -104,8 +103,7 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
               child: Text(data.surname.toUpperCase()[0]),
               backgroundColor: Color(0xff9188E5),
             ),
-      title: Text('${data.surname} ',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0)),
+      title: Text('${data.surname} ', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0)),
       subtitle: Text('${data.name}', style: const TextStyle(fontSize: 14.0)),
       trailing: type == Type.demande
           ? Wrap(
@@ -149,15 +147,11 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
         elevation: 0.0,
         title: const Text(
           'Amis',
-          style: TextStyle(
-              fontSize: 22.0,
-              color: Color(0xff201F23),
-              fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 22.0, color: Color(0xff201F23), fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
           FlatButton(
-            child:
-                const Icon(Icons.close, size: 30.0, color: Color(0xff201F23)),
+            child: const Icon(Icons.close, size: 30.0, color: Color(0xff201F23)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -168,6 +162,13 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
             )
           : SingleChildScrollView(
               child: Container(
+                decoration: BoxDecoration(
+                  border: Border(top: BorderSide(width: 2.0, color: Color(0xffEEEEEE))),
+                  image: const DecorationImage(
+                    image: const AssetImage("bg.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

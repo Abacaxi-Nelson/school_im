@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:firestore_service/firestore_service.dart';
+//import 'package:firestore_service/firestore_service.dart';
 import 'package:meta/meta.dart';
 import 'package:school_im/app/home/models/entry.dart';
 import 'package:school_im/app/home/models/job.dart';
@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_im/app/home/models/school.dart';
 import 'package:school_im/app/home/models/group.dart';
 import 'package:school_im/app/home/models/message.dart';
+import 'package:school_im/services/firestore_service.dart';
 
 String documentIdFromCurrentDate() => DateTime.now().toIso8601String();
 
@@ -29,13 +30,13 @@ class FirestoreDatabase {
   }
 
   Stream<List<Message>> chatStream(Group group) {
-    print("chatStream ${group}");
-    print("chatStream ${FirestorePath.messages(group.id)}");
+    print("chatStream 1 ${group}");
+    print("chatStream 2 ${FirestorePath.messages(group.id)}");
     return _service.collectionStream(
-      path: FirestorePath.messages(group.id),
-      builder: (data, documentId) => Message.fromMap(data, documentId),
-      sort: (lhs, rhs) => rhs.createdDate.compareTo(lhs.createdDate),
-    );
+        path: FirestorePath.messages(group.id),
+        builder: (data, documentId) => Message.fromMap(data, documentId),
+        sort: (lhs, rhs) => lhs.createdDate.compareTo(rhs.createdDate),
+        limit: 50);
   }
 
   Stream<List<Group>> groupsStream() {

@@ -9,7 +9,7 @@ const SecondaryColorLight = const Color(0xFFfffd8d);
 const SecondaryColorDark = const Color(0xFFc9992c);
 
 const Background = Colors.white;
-const TextColor = Colors.pink;
+const TextColor = Color(0xff201F23);
 
 /*
 const PrimaryColor = const Color(0xFF008080);
@@ -44,7 +44,9 @@ class MyTheme {
       cardColor: Background,
       textSelectionColor: PrimaryColorLight,
       backgroundColor: Background,
-      /*
+      iconTheme: IconThemeData(
+        color: TextColor, //change your color here
+      ),
       primaryTextTheme: TextTheme(
         headline6: TextStyle(color: TextColor),
         headline5: TextStyle(color: TextColor),
@@ -65,7 +67,6 @@ class MyTheme {
           headline1: base.textTheme.headline6.copyWith(color: TextColor),
           bodyText2: base.textTheme.bodyText2.copyWith(color: TextColor),
           bodyText1: base.textTheme.bodyText1.copyWith(color: TextColor)),
-    */
     );
   }
 }
