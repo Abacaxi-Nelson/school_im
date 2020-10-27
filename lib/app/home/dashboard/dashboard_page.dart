@@ -87,6 +87,8 @@ class DashboardPage extends ConsumerWidget {
   }
 
   Widget drawer(BuildContext context) {
+    final firebaseAuth = context.read(firebaseAuthProvider);
+
     return Drawer(
       // Add a ListView to the drawer. This ensures the user can scroll
       // through the options in the drawer if there isn't enough vertical
@@ -111,6 +113,16 @@ class DashboardPage extends ConsumerWidget {
                 AppRoutes.accountPage,
               );
             },
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: FlatButton(
+                key: const Key("Se deconnecter"),
+                child: const Icon(Icons.logout, color: Color(0xff201F23)),
+                onPressed: () => firebaseAuth.signOut(),
+              ),
+            ),
           ),
         ],
       ),

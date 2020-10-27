@@ -36,7 +36,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: AuthWidget(
         profileBuilder: (_) => InitProfilePage(),
-        nonSignedInBuilder: (_) => SignInPage(),
+        nonSignedInBuilder: (_) {
+          print("passage MAIN");
+          return SignInPage();
+        },
         signedInBuilder: (_) => DashboardPage(), //HomePage(),
         waitingBuilder: (_) => SuccesPage(),
       ),

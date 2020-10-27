@@ -47,6 +47,7 @@ class AccountPage extends StatelessWidget {
         iconTheme: IconThemeData(
           color: Color(0xff201F23), //change your color here
         ),
+        /*
         actions: <Widget>[
           FlatButton(
             key: const Key(Keys.logout),
@@ -54,6 +55,7 @@ class AccountPage extends StatelessWidget {
             onPressed: () => _confirmSignOut(context, firebaseAuth),
           ),
         ],
+        */
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(130.0),
           child: _buildUserInfo(user),

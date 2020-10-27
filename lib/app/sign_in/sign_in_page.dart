@@ -43,9 +43,7 @@ class SignInPage extends ConsumerWidget {
 }
 
 class SignInPageContents extends StatelessWidget {
-  const SignInPageContents(
-      {Key key, this.viewModel, this.title = 'Architecture Demo'})
-      : super(key: key);
+  const SignInPageContents({Key key, this.viewModel, this.title = 'Architecture Demo'}) : super(key: key);
   final SignInViewModel viewModel;
   final String title;
 
@@ -92,11 +90,10 @@ class SignInPageContents extends StatelessWidget {
   Widget iosWidget() {
     return FutureBuilder(
       builder: (context, projectSnap) {
-        if (projectSnap.connectionState == ConnectionState.none &&
-            projectSnap.hasData == null) {
+        if (projectSnap.connectionState == ConnectionState.none && projectSnap.hasData == null) {
           return const SizedBox(height: 0.0);
         }
-        if (projectSnap.data == false) {
+        if (projectSnap.data != false) {
           //!= false) {
           return Padding(
             padding: const EdgeInsets.all(20.0),
@@ -108,8 +105,7 @@ class SignInPageContents extends StatelessWidget {
           );
         } else {
           //print("error apple signin not available");
-          return Padding(
-              padding: const EdgeInsets.all(20.0), child: androidWidget());
+          return Padding(padding: const EdgeInsets.all(20.0), child: androidWidget());
         }
       },
       future: AppleSignIn.isAvailable(),
@@ -192,9 +188,7 @@ class SignInPageContents extends StatelessWidget {
               SignInButton(
                 key: emailPasswordButtonKey,
                 text: Strings.signInWithEmailPassword,
-                onPressed: viewModel.isLoading
-                    ? null
-                    : () => _showEmailPasswordSignInPage(context),
+                onPressed: viewModel.isLoading ? null : () => _showEmailPasswordSignInPage(context),
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
               ),
@@ -210,8 +204,7 @@ class SignInPageContents extends StatelessWidget {
                 text: Strings.goAnonymous,
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
-                onPressed:
-                    viewModel.isLoading ? null : viewModel.signInAnonymously,
+                onPressed: viewModel.isLoading ? null : viewModel.signInAnonymously,
               ),
             ],
           ),

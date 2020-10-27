@@ -23,11 +23,12 @@ class AuthWidget extends ConsumerWidget {
     final authStateChanges = watch(authStateChangesProvider);
     return authStateChanges.when(
       data: (user) {
+        print("CHANGEMENT ETAT");
         return FutureBuilder(
             future: _data(context, user),
             //builder: (BuildContext context, AsyncSnapshot<Widget> widget) {
             builder: (context, snapshot) {
-              //return widget.data;
+              print("PASSAGE 1 => ${snapshot.connectionState}");
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
                 case ConnectionState.waiting:
@@ -35,10 +36,12 @@ class AuthWidget extends ConsumerWidget {
                   return Container();
                   break;
                 default:
+                  print("PASSAGE DEFAULT => ${snapshot.hasError}");
                   if (snapshot.hasError) {
                     print('Error auth_widget: ${snapshot.error}');
                     return Container();
                   } else {
+                    print("PASSAGE DEFAULT 2 => ${snapshot.data}");
                     return snapshot.data;
                   }
               }
@@ -59,12 +62,20 @@ class AuthWidget extends ConsumerWidget {
   }
 
   Future<Widget> _data(BuildContext context, User user) async {
+    print("repassage");
+    print("user ${user}");
+
     if (user == null) {
+      print("on va retourner nonSignedInBuilder ");
+      print(nonSignedInBuilder);
       return nonSignedInBuilder(context);
     }
 
+    print("user non null1");
     final database = context.read(databaseProvider);
+    print("user non null2");
     final Profile profile = await database.getorCreateProfile(user.uid, 'profile');
+    print("user non null3");
     profile.stringify;
     print(profile);
 
