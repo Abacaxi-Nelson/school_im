@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "574718516777",
+    "firebase_url": "https://school-6a547.firebaseio.com",
+    "project_id": "school-6a547",
+    "storage_bucket": "school-6a547.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574718516777:android:a95f467f9ca0f8e928c638",
+        "android_client_info": {
+          "package_name": "com.abacaxi.school.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574718516777-63b9o9op49learsebfpaka6c7g3da4td.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb4BQKICyz3W7OKMBivsrKVZSSIunJ0HE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574718516777-63b9o9op49learsebfpaka6c7g3da4td.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574718516777-9mm6je000t7149ednu624cojpa8svhm8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.abacaxi.school.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
