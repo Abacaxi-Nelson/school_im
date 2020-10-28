@@ -53,7 +53,7 @@ class SuccesPage extends ConsumerWidget {
                   label: 'Hey c\'est ok, mes parents ont valide !',
                   onPressed: () async {
                     print("press ok");
-                    Profile profile = await database.getProfile(user.uid);
+                    Profile profile = await database.getProfile();
                     if (profile.isValide()) {
                       await Navigator.of(context, rootNavigator: true).pushNamed(AppRoutes.dashboardPage);
                     } else {

@@ -11,9 +11,11 @@ import 'package:school_im/app/home/profile/init_profile.dart';
 import 'package:school_im/app/home/profile/init_profile.dart';
 import 'package:school_im/app/home/profile/succes.dart';
 import 'package:school_im/app/home/dashboard/dashboard_page.dart';
+import 'package:school_im/app/home/dashboard/dashboard_parent_page.dart';
 import 'package:school_im/theme.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +23,9 @@ Future<void> main() async {
   initializeDateFormatting('fr_FR', null);
 
   await Firebase.initializeApp();
+  //FirebaseCrashlytics.instance.crash();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
   runApp(ProviderScope(
     child: MyApp(),
   ));
@@ -43,6 +48,7 @@ class MyApp extends StatelessWidget {
         },
         signedInBuilder: (_) => DashboardPage(), //HomePage(),
         waitingBuilder: (_) => SuccesPage(),
+        signedInParentBuilder: (_) => DashboardParentPage(),
       ),
       onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings, firebaseAuth),
     );

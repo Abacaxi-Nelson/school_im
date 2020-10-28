@@ -35,7 +35,7 @@ class _NotificationFriendPageState extends State<NotificationFriendPage> {
     blokeds = await database.getBlokedProfile();
     requests = await database.getRequestProfile();
     friends = await database.getFriendProfile();
-    profile = await database.getProfile(user.uid);
+    profile = await database.getProfile();
     print("end ${profile} ");
     print("===========");
     print("${friends}");

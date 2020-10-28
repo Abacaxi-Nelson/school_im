@@ -54,7 +54,7 @@ class _ChatPageState extends State<ChatPage> {
     if (fiendId == "") return Text("No NAME");
 
     return FutureBuilder(
-        future: database.getProfile(fiendId),
+        future: database.getProfileWithUserId(fiendId),
         builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -63,7 +63,7 @@ class _ChatPageState extends State<ChatPage> {
               break;
             default:
               if (snapshot.hasError) {
-                print('Error auth_widget: ${snapshot.error}');
+                print('Error chat: ${snapshot.error}');
                 return Container();
               } else {
                 print(snapshot.data);

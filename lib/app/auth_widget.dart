@@ -4,67 +4,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_im/app/home/jobs/empty_content.dart';
 import 'package:school_im/app/top_level_providers.dart';
 import 'package:school_im/app/home/models/profile.dart';
+import 'package:school_im/app/home/models/parent.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class AuthWidget extends ConsumerWidget {
-  const AuthWidget({
-    Key key,
-    @required this.profileBuilder,
-    @required this.signedInBuilder,
-    @required this.nonSignedInBuilder,
-    @required this.waitingBuilder,
-  }) : super(key: key);
+  const AuthWidget(
+      {Key key,
+      @required this.profileBuilder,
+      @required this.signedInBuilder,
+      @required this.nonSignedInBuilder,
+      @required this.waitingBuilder,
+      @required this.signedInParentBuilder})
+      : super(key: key);
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
   final WidgetBuilder profileBuilder;
   final WidgetBuilder waitingBuilder;
+  final WidgetBuilder signedInParentBuilder;
 
-  @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final profile = watch(profileProvider);
-
-    return profile.when(
-      data: (profile) => _data(context, profile),
-      loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      error: (_, __) => const Scaffold(
-        body: EmptyContent(
-          title: 'Something went wrong',
-          message: 'Can\'t load data right now.',
-        ),
-      ),
-    );
-  }
-
-  Widget _data(BuildContext context, Profile profile) {
-    print("repassage");
-    print("profile ${profile}");
-
-    if (profile == null) {
-      print("on va retourner nonSignedInBuilder ");
-      print(nonSignedInBuilder);
-      return nonSignedInBuilder(context);
-    }
-
-    profile.stringify;
-    print(profile);
-
-    if (profile.isNewProfile()) {
-      return profileBuilder(context);
-    } else if (!profile.isValide()) {
-      return waitingBuilder(context);
-    } else {
-      return signedInBuilder(context);
-    }
-  }
-
-  /*
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final authStateChanges = watch(authStateChangesProvider);
-    
+
     return authStateChanges.when(
       data: (user) {
         print("CHANGEMENT ETAT");
@@ -104,25 +65,57 @@ class AuthWidget extends ConsumerWidget {
       ),
     );
   }
-  
 
   Future<Widget> _data(BuildContext context, User user) async {
-    print("repassage");
-    print("user ${user}");
+    final database = context.read(databaseProvider);
+
+    print("auth_widget repassage");
+    print("auth_widget user ${user}");
 
     if (user == null) {
-      print("on va retourner nonSignedInBuilder ");
+      print(" auth_widgeton va retourner nonSignedInBuilder ");
       print(nonSignedInBuilder);
       return nonSignedInBuilder(context);
     }
 
-    print("user non null1");
-    final database = context.read(databaseProvider);
-    print("user non null2");
+    // user is non null, check if parents
+    // last step ? is parent or not
+    print("auth_widget START PARENT");
+    Parent parent = await database.searchParent(user.email);
+    if (parent != null) {
+      print(" auth_widget PARENT, parent => ${parent}");
+
+      if (parent.validatedDate != null) {
+        print("validatedDate is non null");
+        return signedInParentBuilder(context);
+      }
+
+      parent.validatedDate = DateTime.now();
+      parent.parentId = user.uid;
+      await database.setParent(parent, parent.id);
+
+      //validate the child
+      print("tentative getProfile => <<${parent.id}>>");
+      Profile p = await database.getProfileWithUserId(parent.id);
+      print("profile => ${p}");
+      p.valide = true;
+      await database.setProfile(p, 'profile');
+
+      FirebaseCrashlytics.instance.setUserIdentifier(parent.parentId);
+      FirebaseCrashlytics.instance.setCustomKey('str_key', parent.toString());
+      return signedInParentBuilder(context);
+    }
+
+    print("auth_widget user non null1");
+
+    print("auth_widget user non null2");
     final Profile profile = await database.getorCreateProfile(user.uid, 'profile');
-    print("user non null3");
+    print("auth_widget user non null3");
     profile.stringify;
     print(profile);
+
+    FirebaseCrashlytics.instance.setUserIdentifier(profile.userId);
+    FirebaseCrashlytics.instance.setCustomKey('str_key', profile.toString());
 
     if (profile.isNewProfile()) {
       return profileBuilder(context);
@@ -132,5 +125,4 @@ class AuthWidget extends ConsumerWidget {
       return signedInBuilder(context);
     }
   }
-  */
 }

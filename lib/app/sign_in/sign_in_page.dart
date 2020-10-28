@@ -83,7 +83,7 @@ class SignInPageContents extends StatelessWidget {
       onPressed: () {
         viewModel.isLoading ? null : viewModel.signInGoogle();
       },
-      darkMode: false, // default: false
+      darkMode: true, // default: false
     );
   }
 
@@ -98,7 +98,7 @@ class SignInPageContents extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.all(20.0),
             child: ios.AppleSignInButton(
-              style: ios.ButtonStyle.white,
+              style: ios.ButtonStyle.black,
               type: ios.ButtonType.signIn,
               onPressed: viewModel.isLoading ? null : viewModel.signInIos,
             ),

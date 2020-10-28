@@ -36,6 +36,7 @@ dependencies:
   image_picker: ^0.6.7+12
   flutter_native_image: ^0.0.5+3
   firebase_storage: ^4.0.1
+  firebase_crashlytics: ^0.2.1+1
   firestore_service:
     git:
       url: https://github.com/bizz84/codewithandrea_flutter_packages

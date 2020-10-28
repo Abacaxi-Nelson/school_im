@@ -9,6 +9,7 @@ import 'package:school_im/services/firestore_path.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:school_im/app/home/models/school.dart';
 import 'package:school_im/app/home/models/group.dart';
+import 'package:school_im/app/home/models/parent.dart';
 import 'package:school_im/app/home/models/message.dart';
 import 'package:school_im/services/firestore_service.dart';
 
@@ -37,6 +38,19 @@ class FirestoreDatabase {
         builder: (data, documentId) => Message.fromMap(data, documentId),
         sort: (lhs, rhs) => lhs.createdDate.compareTo(rhs.createdDate),
         limit: 50);
+  }
+
+  Stream<List<Group>> groupsStreamWithId(String userId) {
+    print("PASSAGE groupsStream");
+    List<String> lst = new List();
+    lst.add(userId);
+
+    return _service.collectionStream(
+      path: FirestorePath.groups(),
+      builder: (data, documentId) => Group.fromMap(data, documentId),
+      queryBuilder: (query) => query.where('members', arrayContainsAny: lst),
+      sort: (lhs, rhs) => rhs.modifiedDate.compareTo(lhs.modifiedDate),
+    );
   }
 
   Stream<List<Group>> groupsStream() {
@@ -135,9 +149,40 @@ class FirestoreDatabase {
     }
   }
 
-  ///
+  //////////// PARENTS
+  Future<void> setParent(Parent parent, String id) => _service.setData(
+        path: FirestorePath.parent(id),
+        data: parent.toMap(),
+      );
+
+  Future<Parent> searchParent(String email) async {
+    CollectionReference parentCol = FirebaseFirestore.instance.collection(FirestorePath.parents());
+    QuerySnapshot querySnapshot = await parentCol.where('email', isEqualTo: email).get();
+
+    print("querySnapshot.docs => ${querySnapshot.docs.length}");
+
+    if (querySnapshot.docs.length > 0) {
+      return Parent.fromMap(querySnapshot.docs[0].data(), querySnapshot.docs[0].id);
+    } else {
+      return null;
+    }
+  }
+
+  Future<Parent> getParent() async {
+    CollectionReference parentCol = FirebaseFirestore.instance.collection(FirestorePath.parents());
+    QuerySnapshot querySnapshot = await parentCol.where('parentId', isEqualTo: uid).get();
+
+    print("getParent querySnapshot.docs => ${querySnapshot.docs.length}");
+
+    if (querySnapshot.docs.length > 0) {
+      return Parent.fromMap(querySnapshot.docs[0].data(), querySnapshot.docs[0].id);
+    } else {
+      return null;
+    }
+  }
 
   //////////// PROFILE
+
   Stream<List<UserInfo>> friendsStream() {
     return _service.collectionStream(
       path: FirestorePath.friends(uid),
@@ -217,11 +262,23 @@ class FirestoreDatabase {
         data: profile.toMap(),
       );
 
-  Future<Profile> getProfile(String userId) async {
+  Future<Profile> getProfile() async {
+    print("getProfile => ${FirestorePath.profiles(uid)}");
     final CollectionReference profile = FirebaseFirestore.instance.collection(FirestorePath.profiles(uid));
-    //final CollectionReference profile =
-    //    FirebaseFirestore.instance.collection('/users/pSjOi9DKp0ZwSZevZmvdZUyi1SA3/profiles');
     final DocumentSnapshot datasnapshot = await profile.doc('profile').get();
+    print("===> ${datasnapshot.exists}");
+    if (datasnapshot.exists) {
+      return Profile.fromMap(datasnapshot.data());
+    } else {
+      return null;
+    }
+  }
+
+  Future<Profile> getProfileWithUserId(String userId) async {
+    print("getProfileWithUserId => ${FirestorePath.profiles(userId)}");
+    final CollectionReference profile = FirebaseFirestore.instance.collection(FirestorePath.profiles(userId));
+    final DocumentSnapshot datasnapshot = await profile.doc('profile').get();
+    print("===> ${datasnapshot.exists}");
     if (datasnapshot.exists) {
       return Profile.fromMap(datasnapshot.data());
     } else {

@@ -6,6 +6,8 @@ import 'package:meta/meta.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:school_im/app/home/models/parent.dart';
+import 'package:school_im/app/top_level_providers.dart';
 
 class SignInViewModel with ChangeNotifier {
   SignInViewModel({@required this.auth});
@@ -40,8 +42,11 @@ class SignInViewModel with ChangeNotifier {
     final GoogleSignInAccount googleUser = await googleSignIn.signIn();
 
     if (googleUser != null) {
+      print('googleUser => ${googleUser}');
+
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
+      print('googleAuth => ${googleAuth}');
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,

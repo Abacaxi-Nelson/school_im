@@ -3,6 +3,8 @@ import 'package:school_im/common_widgets/custom_textfield.dart';
 import 'package:school_im/common_widgets/custom_button.dart';
 import 'package:school_im/app/home/models/school.dart';
 import 'package:school_im/app/home/models/profile.dart';
+import 'package:school_im/app/home/models/parent.dart';
+
 import 'package:school_im/app/top_level_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:school_im/routing/app_router.dart';
@@ -45,8 +47,7 @@ class _ParentProfilePageState extends State<ParentProfilePage> {
 
   void _getEmailValue() {
     setState(() {
-      isEmailOk = RegExp(
-              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+      isEmailOk = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
           .hasMatch(myControllerEmail.text);
     });
   }
@@ -77,14 +78,18 @@ class _ParentProfilePageState extends State<ParentProfilePage> {
     sc.stringify;
     await database.setSchool(sc);
 
+    //we set parents now
+    final Parent parent = Parent(
+        phone: myControllerTel.text, email: myControllerEmail.text, createdDate: DateTime.now(), id: userInfo.id);
+    await database.setParent(parent, userInfo.id);
+
     //await database.setProfileSchool(widget.profile, widget.suggestion);
     //await database.setProfileChat(widget.profile, widget.suggestion);
     // Check if chat exists, or create it
 
     //go to dashboard !!!! tranks to auth change ?
     //await Navigator.of(context, rootNavigator: true).pushNamed(AppRoutes.dashboardPage);
-    await Navigator.of(context, rootNavigator: true)
-        .pushReplacementNamed(AppRoutes.succesPage);
+    await Navigator.of(context, rootNavigator: true).pushReplacementNamed(AppRoutes.succesPage);
 
     /*
     //final database = context.read(databaseProvider);
@@ -113,28 +118,22 @@ class _ParentProfilePageState extends State<ParentProfilePage> {
         ),
         backgroundColor: const Color(0xff9188E5),
         body: Padding(
-            padding: const EdgeInsets.symmetric(
-                vertical: 16.0, horizontal: 16.0), //const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0), //const EdgeInsets.all(16.0),
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
                       child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0), //const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0), //const EdgeInsets.all(16.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         const SizedBox(height: 20.0),
-                        const Text(
-                            'Bientot Fini ! Demande a un de vos parents de saisir les infos suivantes',
+                        const Text('Bientot Fini ! Demande a un de vos parents de saisir les infos suivantes',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20.0,
-                                color: Colors.white)),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white)),
                         const SizedBox(height: 40.0),
                         CustomTextField(
                           suffixIcon: isEmailOk,
@@ -161,12 +160,8 @@ class _ParentProfilePageState extends State<ParentProfilePage> {
                   const SizedBox(height: 20.0),
                   CustomButton(
                     borderColor: Colors.transparent,
-                    color: !(isTelOk && isEmailOk)
-                        ? Colors.white.withAlpha(50)
-                        : const Color(0xffFFCA5D),
-                    color2: !(isTelOk && isEmailOk)
-                        ? const Color(0xff0D0A06).withAlpha(50)
-                        : const Color(0xff0D0A06),
+                    color: !(isTelOk && isEmailOk) ? Colors.white.withAlpha(50) : const Color(0xffFFCA5D),
+                    color2: !(isTelOk && isEmailOk) ? const Color(0xff0D0A06).withAlpha(50) : const Color(0xff0D0A06),
                     label: 'Continuer',
                     onPressed: () async {
                       if (isTelOk && isEmailOk) {

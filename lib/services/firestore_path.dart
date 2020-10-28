@@ -25,4 +25,7 @@ class FirestorePath {
   static String requests(String uid) => 'users/$uid/requests';
   static String bloked(String uid, String id) => 'users/$uid/blokeds/$id';
   static String blokeds(String uid) => 'users/$uid/blokeds';
+
+  static String parents() => 'parents';
+  static String parent(String userId) => 'parents/$userId';
 }

@@ -4,10 +4,21 @@ import 'package:logger/logger.dart';
 import 'package:school_im/services/firestore_database.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:school_im/app/home/models/profile.dart';
+import 'package:school_im/app/home/models/parent.dart';
 
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
 final authStateChangesProvider = StreamProvider<User>((ref) => ref.watch(firebaseAuthProvider).authStateChanges());
+
+final parentProvider = FutureProvider<Parent>((ref) async {
+  final auth = ref.watch(authStateChangesProvider);
+  final db = ref.watch(databaseProvider);
+
+  if (auth.data?.value?.uid != null) {
+    return db.getParent();
+  }
+  return null;
+});
 
 final profileProvider = FutureProvider<Profile>((ref) async {
   final auth = ref.watch(authStateChangesProvider);
@@ -18,7 +29,7 @@ final profileProvider = FutureProvider<Profile>((ref) async {
 
   if (auth.data?.value?.uid != null) {
     print("retourner NON  NULL ");
-    return db.getProfile(auth.data?.value?.uid);
+    return db.getProfileWithUserId(auth.data?.value?.uid);
   }
   print("retourner NULL ");
   return null;
