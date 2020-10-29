@@ -54,7 +54,7 @@ class FirestoreDatabase {
   }
 
   Stream<List<Group>> groupsStream() {
-    print("PASSAGE groupsStream");
+    print("PASSAGE groupsStream ${uid}");
     List<String> lst = new List();
     lst.add(uid);
 

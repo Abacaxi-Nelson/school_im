@@ -31,8 +31,8 @@ final groupsStreamProvider = StreamProvider.autoDispose.family<List<Group>, Stri
 class DashboardParentPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    //final firebaseAuth = context.read(firebaseAuthProvider);
-    //final database = context.read(databaseProvider);
+    final firebaseAuth = context.read(firebaseAuthProvider);
+    final database = context.read(databaseProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +47,7 @@ class DashboardParentPage extends ConsumerWidget {
         actions: <Widget>[
           FlatButton(
             child: const Icon(Icons.logout, color: Color(0xff201F23)),
-            //onPressed: () => firebaseAuth.signOut(),
+            onPressed: () => firebaseAuth.signOut(),
           ),
         ],
       ),

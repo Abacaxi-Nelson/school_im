@@ -130,6 +130,7 @@ class DashboardPage extends ConsumerWidget {
         message: 'Can\'t load data right now.',
       ),
       data: (p) {
+        print(p.userId);
         return Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(
@@ -324,8 +325,9 @@ class GroupListTile extends StatelessWidget {
     if (group.unread == null) {
       c = Colors.white.withOpacity(0.2);
     } else if (group.unread.contains(user)) {
-      Color(0xFFffca5d).withOpacity(0.5);
-      i = Icon(Icons.flash_on);
+      print("PASSAGE COLOR");
+      c = Colors.white.withOpacity(0.8);
+      i = Icon(Icons.flash_on, color: Color(0xFFffca5d));
     }
 
     return Container(

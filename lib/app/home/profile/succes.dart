@@ -9,6 +9,7 @@ import 'package:school_im/routing/app_router.dart';
 
 class SuccesPage extends ConsumerWidget {
   AnimationController animationController;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -17,6 +18,7 @@ class SuccesPage extends ConsumerWidget {
     final user = firebaseAuth.currentUser;
 
     return Scaffold(
+        key: _scaffoldKey,
         backgroundColor: const Color(0xff9188E5),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0), //const EdgeInsets.all(16.0),
@@ -58,7 +60,7 @@ class SuccesPage extends ConsumerWidget {
                       await Navigator.of(context, rootNavigator: true).pushNamed(AppRoutes.dashboardPage);
                     } else {
                       final snackBar = SnackBar(content: Text('Toujours en attente de validation'));
-                      Scaffold.of(context).showSnackBar(snackBar);
+                      _scaffoldKey.currentState.showSnackBar(snackBar);
                     }
                   },
                 ),
