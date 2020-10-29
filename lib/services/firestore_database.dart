@@ -286,11 +286,11 @@ class FirestoreDatabase {
     }
   }
 
-  Future<Profile> getorCreateProfile(String userId, String type) async {
+  Future<Profile> getorCreateProfile(String userId, String type, String token) async {
     CollectionReference profile = FirebaseFirestore.instance.collection(FirestorePath.profiles(uid));
     final DocumentSnapshot datasnapshot = await profile.doc('profile').get();
     if (!datasnapshot.exists) {
-      final profile = Profile(userId: userId, valide: false);
+      final profile = Profile(userId: userId, valide: false, token: token);
       await setProfile(profile, 'profile');
       return profile;
     } else {

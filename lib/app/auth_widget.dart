@@ -6,6 +6,7 @@ import 'package:school_im/app/top_level_providers.dart';
 import 'package:school_im/app/home/models/profile.dart';
 import 'package:school_im/app/home/models/parent.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:school_im/services/firebase_notification_service.dart';
 
 class AuthWidget extends ConsumerWidget {
   const AuthWidget(
@@ -109,7 +110,8 @@ class AuthWidget extends ConsumerWidget {
     print("auth_widget user non null1");
 
     print("auth_widget user non null2");
-    final Profile profile = await database.getorCreateProfile(user.uid, 'profile');
+    String token = await FirebaseNotificationService.instance.getDeviceToken();
+    final Profile profile = await database.getorCreateProfile(user.uid, 'profile', token);
     print("auth_widget user non null3");
     profile.stringify;
     print(profile);

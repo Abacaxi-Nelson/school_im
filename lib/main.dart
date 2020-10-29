@@ -16,6 +16,8 @@ import 'package:school_im/theme.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:school_im/services/firebase_notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +27,9 @@ Future<void> main() async {
   await Firebase.initializeApp();
   //FirebaseCrashlytics.instance.crash();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
+  FirebaseNotificationService.instance.getIOSPermission();
+  await FirebaseNotificationService.instance.subscribe();
 
   runApp(ProviderScope(
     child: MyApp(),
